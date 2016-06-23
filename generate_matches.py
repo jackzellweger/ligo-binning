@@ -13,6 +13,15 @@ The masses are the only things that matter in this particular template bank # FI
 '''
 
 
+# JACK'S IMPORTS * * * * * * * * * * * * * * * *
+import igraph
+import os
+import optparse
+import sys
+# * * * * * * * * * * * * * * * * * * * * * * *
+from glue.ligolw import ligolw
+
+
 from glue.ligolw import ligolw
 from glue.ligolw import lsctables
 from glue.ligolw import utils as ligolw_utils
@@ -257,3 +266,21 @@ for current in range(len(edge_array)):
 
 # Print out execution time:     
 print("Execution Time: %s seconds" % (time.time() - start_time))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}}
