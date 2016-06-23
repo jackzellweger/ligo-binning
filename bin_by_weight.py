@@ -2,11 +2,11 @@
 
 import optparse
 import sys
-
 import os
 import igraph
 import cairo
 import numpy as np
+
 
 
 # PARSER OPTIONS * * * * * * * * * * * * * * * * * *
