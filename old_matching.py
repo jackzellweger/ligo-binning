@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+# JACK'S IMPORTS * * * * * * * * * * * * * * * *
+import igraph
+import os
+import optparse
+import sys
+# * * * * * * * * * * * * * * * * * * * * * * *
+
 from glue.ligolw import ligolw
 from glue.ligolw import lsctables
 from glue.ligolw import utils as ligolw_utils
@@ -79,7 +86,7 @@ edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='nc
 # [[0,1], [0, 2]... [2,3], [3,4]]
 print "Loading edge list..."
 edge_array = np.loadtxt("./edge_lists/edge_list_%s.ncol" % str(numTemplates))
-edge_array = edge_array[generateFrom:generateTo]
+#edge_array = edge_array[generateFrom:generateTo]
 
 # Read in PSD and make it usable
 print "Reading PSD..."
@@ -170,22 +177,46 @@ for current in range(len(edge_array)):
         # FS: Pack up waveform into something usable by match function
         new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name, fs[q].epoch, fs[q].f0, fs[q].deltaF, fs[q].sampleUnits,
                                                fs[q].data.length)
-        # new = CreateCOMPLEX8FrequencySeries(fs.name, fs.epoch, fs.f0, fs.deltaF, fs.sampleUnits, fs.data.length)
-        # new[q].data.data[:] = fs[q].data.data[:]
+        new[q].data.data[:] = fs[q].data.data[:]
 
         # FS: Whiten waveform
-        ASD = np.sqrt(PSD)
         new[q].data.data /= ASD
 
         # FS: Normalize waveform
         sigmasq[q] = float(np.vdot(new[q].data.data, new[q].data.data).real * 4 * 1. / duration)
-        new[q].data.data /= sigmasq ** 0.5
+        new[q].data.data /= sigmasq[q] ** 0.5
 
     # Calculate match of waveform with another
-    print '%s and %s : %s ' % (str(edge_array[current][0]), str(edge_array[current][1]),
+    print "%s <-> %s : %s " % (str(edge_array[current][0]), str(edge_array[current][1]),
                                str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache)))
 
-    target.write('%s %s %s' % (str(index[int(edge_array[current][0])]), str(index[int(edge_array[current][1])]),
+    target.write("%s %s %s" % (str(int(edge_array[current][0])), str(int(edge_array[current][1])),
                                str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
 
     target.write("\n")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

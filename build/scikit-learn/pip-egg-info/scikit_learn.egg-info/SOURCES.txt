@@ -1,6 +1,0 @@
-setup.cfg
-pip-egg-info/scikit_learn.egg-info/PKG-INFO
-pip-egg-info/scikit_learn.egg-info/SOURCES.txt
-pip-egg-info/scikit_learn.egg-info/dependency_links.txt
-pip-egg-info/scikit_learn.egg-info/not-zip-safe
-pip-egg-info/scikit_learn.egg-info/top_level.txt
