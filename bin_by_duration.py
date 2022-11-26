@@ -91,6 +91,7 @@ for r in range(len(g.es['weight'])):
 
 for r in range(len(g.vs)):
     a.append('%s' % str(r))
+
 g.vs['label'] = a
 
 # Vars for duration calculation
