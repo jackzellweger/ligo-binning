@@ -12,7 +12,6 @@ In the XML that this file accesses, all the spins are 0.
 The masses are the only things that matter in this particular template bank # FIXME: Fact check this claim.
 '''
 
-
 # JACK'S IMPORTS * * * * * * * * * * * * * * * *
 import igraph
 import os
