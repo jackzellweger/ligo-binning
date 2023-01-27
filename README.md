@@ -30,9 +30,11 @@ wave-signature.jpg
 
 The parameters of different binary black hole systems, as you can imagine, result in wildly different binary black hole signatures.
 
+There were lots of
+
 ### My Job
 
-
+<!-- Maybe you can pepper code snippets into the introcution for more interest, variation, and dramatic effect. -->
 
 My job was to analyze and categorize different kinds of (purely theoretical) gravitational waveforms using raw characteristics identified by the `GSTlal` Python library. My ultimate goal was to figure out if I could group these waveforms in a way that would make the instrument even more sensitive to real-life detections.
 
@@ -68,7 +70,7 @@ One of the main uses of `GstLAL` is to compare the data off the detector to how 
 
 Waveform binning is a technique that is used to group gravitational waveforms into categories or bins based on certain characteristics or features. This can be useful for a number of purposes, such as improving the efficiency of gravitational wave searches, or for classifying gravitational waves based on their source or other properties.
 
-In the context of `GstLAL`, waveform binning is used to improve the sensitivity of gravitational wave searches by allowing analysts to focus on specific regions of the parameter space where gravitational waves are more likely to be found. By binning the waveforms according to certain features, analysts can reduce the number of templates that need to be searched and thereby increase the speed and efficiency of the analysis.
+In the context of `GstLAL`, waveform binning is used to improve the sensitivity of gravitational wave searches by allowing analysts to focus on specific regions of the parameter space where gravitational waves are more likely to be found. By binning the waveforms by certain features, analysts can reduce the number of templates that need to be searched and thereby increase the speed and efficiency of the analysis.
 
 Waveform binning can be performed using a variety of methods, such as clustering algorithms or machine learning techniques. The specific method used will depend on the goals of the analysis and the characteristics of the data.
 
@@ -86,7 +88,7 @@ In the context of LIGO and `GstLAL`, the parameter space refers to the vast mult
 
 The parameter space for gravitational wave sources is very large, even for a small sliver of the total possibilities of black holes. You have to consider .... ...
 
-One way to increase the efficiency of the search through parameter space is to use binning to group waveforms into like categories based on their characteristics. Appraoching it this way has many benefits, as it..
+One way to increase the efficiency of the search through parameter space is to use binning to group waveforms into like categories based on their characteristics. Approaching it this way has many benefits, as it..
 - ... can allow analysts to focus their search on specific regions of the parameter space where gravitational waves are more likely to be found, rather than having to search the entire space. This can increase sensitivity
 - ... can create
 
