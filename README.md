@@ -44,6 +44,14 @@ There are a lot of moving parts at LIGO, so in this project, we will focus on my
 
 But what is binning with respect to gravitational wave detection?
 
+
+<!-- Les's email -->
+When you do a search in gstlal, you estimate the background (i.e. the characteristics of the noise) by binning the search’s template bank and calculating the background of the entire bin and applying it to each template in the bin. (The background should really be done individually for each template, but the statistics are not large enough, thus the need for binning.) The binning was done in different ways at the time and on physical parameters, like mass/spin or duration, but I thought we could come up with a better strategy that optimized the likeness of templates within each bin. My thinking was that this would improve sensitivity.  However, our initial findings were actually quite surprising. We found that a random binning actually improves the sensitivity the most.  I still think we discovered a flaw in the group’s thinking about template binning, which is that you should bin to optimize sensitivity.  I think instead we need to recognize that the background estimate assumes templates within a given bin are similar, and if they are not, then you can end up with artificially boosted sensitivities.
+
+Also, I think we found that walktrap "worked" best
+
+---
+
 # Background
 
 LIGO is a large physics experiment that detects, and conducts research on, gravitational waves. These waves are ripples in the fabric of space-time that are caused by the acceleration of massive objects, such as merging black holes or neutron stars. During my research, I focused on detecting gravitational wave signatures from "intermediate mass black holes," which are a certain mass-class of black hole that emit waves for a specific duration, and at specific evolving frequency ranges.
