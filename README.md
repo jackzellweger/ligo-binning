@@ -1,4 +1,4 @@
-### Introduction
+# Introduction
 
 Welcome to my Laser Interferometer Gravitational-Wave Observatory (LIGO) project! At one time in my career, I worked with LIGO to research ways to improve the sensitivity of their gravitational wave detection-instrument.
 
@@ -6,7 +6,7 @@ Here, I'll give an overview of my the project I worked on, providing details wit
 
 Note: At the time I did my research, LIGO had already made their first direct observation of a gravitational wave, which happened on the 14th of September in 2015.
 
-### The Detections
+# The Detections
 
 The LIGO instruments detected gravitational waves emanating out from merging binary black hole systems, confirming Einstein's theory of relativity in new ways.
 
@@ -26,7 +26,17 @@ The parameters of different binary black hole systems, as you can imagine, resul
 
 There were lots of
 
-### My Job
+# Project Background
+
+LIGO is a large physics experiment that detects, and conducts research on, gravitational waves. These waves are ripples in the fabric of space-time that are caused by the acceleration of massive objects, such as merging black holes or neutron stars. During my research, I focused on detecting gravitational wave signatures from "intermediate mass black holes," which are a certain mass-class of black hole that emit waves for a specific duration, and at specific evolving frequency ranges.
+
+LIGO consists of two detectors located in Hanford, Washington and Livingston, Louisiana. These detectors use lasers and mirrors to measure the extremely small changes in distance that result from the passage of a gravitational wave.
+
+Increasing the sensitivity of LIGO's detectors is critical because it allows scientists to detect gravitational waves from increasingly distant sources. This, in turn, allows them to study a wider range of celestial objects and phenomena, including some that may be too far away or too faint to be observed in other ways.
+
+Because the scales involved are so extreme, scientists and engineers at LIGO are constantly trying to find new ways to increase the sensitivity of the instrument.
+
+# My Job
 
 <!-- Maybe you can pepper code snippets into the introcution for more interest, variation, and dramatic effect. -->
 
@@ -42,19 +52,7 @@ But what is binning with respect to gravitational wave detection?
 <!-- Brief project description -->
 When you do a search in gstlal, you estimate the background (i.e. the characteristics of the noise) by binning the search’s template bank and calculating the background of the entire bin and applying it to each template in the bin. (The background should really be done individually for each template, but the statistics are not large enough, thus the need for binning.) The binning was done in different ways at the time and on physical parameters, like mass/spin or duration, but I thought we could come up with a better strategy that optimized the likeness of templates within each bin. My thinking was that this would improve sensitivity.  However, our initial findings were actually quite surprising. We found that a random binning actually improves the sensitivity the most.  I still think we discovered a flaw in the group’s thinking about template binning, which is that you should bin to optimize sensitivity.  I think instead we need to recognize that the background estimate assumes templates within a given bin are similar, and if they are not, then you can end up with artificially boosted sensitivities.
 
-Also, I think we found that walktrap "worked" best
-
----
-
-# Background
-
-LIGO is a large physics experiment that detects, and conducts research on, gravitational waves. These waves are ripples in the fabric of space-time that are caused by the acceleration of massive objects, such as merging black holes or neutron stars. During my research, I focused on detecting gravitational wave signatures from "intermediate mass black holes," which are a certain mass-class of black hole that emit waves for a specific duration, and at specific evolving frequency ranges.
-
-LIGO consists of two detectors located in Hanford, Washington and Livingston, Louisiana. These detectors use lasers and mirrors to measure the extremely small changes in distance that result from the passage of a gravitational wave.
-
-Increasing the sensitivity of LIGO's detectors is critical because it allows scientists to detect gravitational waves from increasingly distant sources. This, in turn, allows them to study a wider range of celestial objects and phenomena, including some that may be too far away or too faint to be observed in other ways.
-
-Because the scales involved are so extreme, scientists and engineers at LIGO are constantly trying to find new ways to increase the sensitivity of the instrument.
+Also, I think we found that walktrap "worked" best.
 
 # Instrument Sensitivity
 
