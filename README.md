@@ -4,9 +4,7 @@ Welcome to my Laser Interferometer Gravitational-Wave Observatory (LIGO) project
 
 Here, I'll give an overview of my the project I worked on, providing details with little `code snippets`. However, I can't guarantee that the provided snippets will work today, since LIGO's `GstLAL` Python libraries have probably changed a lot since I did my work.
 
-### LIGO
-
-At the time I did my research, LIGO had already made their first direct observation of a gravitational wave, which happened on the 14th of September in 2015.
+Note: At the time I did my research, LIGO had already made their first direct observation of a gravitational wave, which happened on the 14th of September in 2015.
 
 ### The Detections
 
@@ -16,13 +14,9 @@ There are three distinct stages of a black hole merger.
 
 - **Inspiral:** For black holes with masses similar to those of the black holes detected by LIGO, the inspiral phase can last for millions or even billions of years. This is because the gravitational waves emitted during the inspiral phase are very weak, and it takes a long time for the black holes to lose enough energy and angular momentum to come into close enough proximity to merge.
 
-- **Merger:** This is the phase during which the black holes actually collide and merge into a single black hole, is much shorter than the inspiral phase. This phase, in sharp contrast to the inspiral phase, lasts on the order of a few milliseconds to a few seconds.
+- **Merger:** This is the phase during which the black holes actually collide and merge into a single black hole, is much shorter than the inspiral phase. This phase, in sharp contrast to the inspiral phase, lasts on the order of a few milliseconds to a few seconds. The merger phase is characterized by a rapid increase in the amplitude of the gravitational waves emitted by the system, as the black holes come into close proximity and collide. 
 
-	The merger phase is characterized by a rapid increase in the amplitude of the gravitational waves emitted by the system, as the black holes come into close proximity and collide. 
-
-- **Ringdown:** But even after the black holes in the binary system merge, they still aren't finished emitting gravitational waves.
-	
-	The black hole merger is super-chaotic, and represents an enormous perturbation to the system. Any perturbed system will naturally resonate at its normal mode; black holes are no different. When the binaries come together, the resulting black hole "rings" at it's "quasinormal modes" through a stage we call the ringdown.
+- **Ringdown:** But even after the black holes in the binary system merge, they still aren't finished emitting gravitational waves. The black hole merger is super-chaotic, and represents an enormous perturbation to the system. Any perturbed system will naturally resonate at its normal mode; black holes are no different. When the binaries come together, the resulting black hole "rings" at it's "quasinormal modes" through a stage we call the ringdown.
 
 They all come together to make a gravitational wave signature that looks like this.
 
@@ -64,7 +58,7 @@ Because the scales involved are so extreme, scientists and engineers at LIGO are
 
 # Instrument Sensitivity
 
-At these simultaneously extreme microscopic and microscopic scales, instrument sensitivity depends a lot on the precision and quality of your hardware and your software. A lot can chan
+At these simultaneously extreme microscopic and microscopic scales, instrument sensitivity depends a lot on the precision and quality of your hardware and your software.
 
 # The Software
 
@@ -76,36 +70,5 @@ One of the main uses of `GstLAL` is to compare the data off the detector to how 
 
 # Binning
 
-Waveform binning is a technique that is used to group gravitational waveforms into categories or bins based on certain characteristics or features. This can be useful for a number of purposes, such as improving the efficiency of gravitational wave searches, or for classifying gravitational waves based on their source or other properties.
-
-In the context of `GstLAL`, waveform binning is used to improve the sensitivity of gravitational wave searches by allowing analysts to focus on specific regions of the parameter space where gravitational waves are more likely to be found. By binning the waveforms by certain features, analysts can reduce the number of templates that need to be searched and thereby increase the speed and efficiency of the analysis.
-
-Waveform binning can be performed using a variety of methods, such as clustering algorithms or machine learning techniques. The specific method used will depend on the goals of the analysis and the characteristics of the data.
-
-Overall, waveform binning is a useful tool for improving the efficiency and effectiveness of gravitational wave searches, and it is an important part of the analysis process in `GstLAL`.
-
-# Outline
-
-- Parameter space overview
-- How enormous parameter space is, even for a small sliver of gravitational wave sources
-- Ways to use binning to increase the efficiency of the parameter space search
-- Sensitivity-efficiency tradeoffs involved in binning
-- Minimizing sensitivity loss
-
-In the context of LIGO and `GstLAL`, the parameter space refers to the vast multidimensional space that represents the possible values of the parameters that describe a gravitational wave signal. These parameters may include the masses and spins of the objects that generated the wave, the distance to the source, and the orientation of the wave relative to the detector.
-
-The parameter space for gravitational wave sources is very large, even for a small sliver of the total possibilities of black holes. You have to consider .... ...
-
-One way to increase the efficiency of the search through parameter space is to use binning to group waveforms into like categories based on their characteristics. Approaching it this way has many benefits, as it..
-- ... can allow analysts to focus their search on specific regions of the parameter space where gravitational waves are more likely to be found, rather than having to search the entire space. This can increase sensitivity
-- ... can create
-
-
-However, there are sensitivity-efficiency tradeoffs involved in binning, as it can potentially reduce the sensitivity of the detection if it leads to the loss of important information or the neglect of certain regions of the parameter space. To minimize this sensitivity loss, it is important to choose a binning method and parameters that are appropriate for the specific goals of the analysis and the characteristics of the data.
-
-There are several ways to minimize sensitivity loss when using binning, such as choosing a binning method that preserves as much information as possible, or using multiple rounds of binning with progressively finer bin sizes. It is also important to carefully consider the tradeoffs between sensitivity and efficiency and to choose a binning strategy that strikes a good balance between the two.
-
-The way we reduce sensitivity loss is though the algorithm that we choose to bin.
-
-# Critical files
+Waveform binning is a technique used to group gravitational waveforms into categories or "bins" based on certain characteristics, which can improve the efficiency of gravitational wave searches, and increase instrument sensitivity (or so we thought).
 
