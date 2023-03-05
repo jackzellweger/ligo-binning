@@ -25,7 +25,6 @@ do
 	end=$(($i * $binSize))
 done
 
-
 #./generate_matches.py --number $binSize --from $start --to $end
 
 ./generate_matches.py -n $1
