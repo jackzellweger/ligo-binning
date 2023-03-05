@@ -6,21 +6,64 @@ import os
 import igraph
 import cairo
 import numpy as np
+import itertools
+import copy
+
+# JACK'S IMPORTS * * * * * * * * * * * * * * * *
+import igraph
+import os
+import optparse
+import sys
+import matplotlib
+
+matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
+import matplotlib.pyplot as plt
+import copy
+import csv
+# * * * * * * * * * * * * * * * * * * * * * * *
+
+from glue.ligolw import ligolw
+from glue.ligolw import lsctables
+from glue.ligolw import utils as ligolw_utils
+from lalinspiral.sbank.bank import Bank
+import lal
+import lalsimulation as lalsim
+import numpy as np
+from lalinspiral.sbank.psds import get_neighborhood_ASD, get_neighborhood_PSD, get_PSD, get_neighborhood_df_fmax
+from lalinspiral.sbank.psds import noise_models, read_psd, get_PSD
+from scipy.interpolate import UnivariateSpline
+from lalinspiral.sbank.waveforms import waveforms
+import lalinspiral.sbank.waveforms as wf
+from lalinspiral import CreateSBankWorkspaceCache
+from lalinspiral import InspiralSBankComputeMatch
+from lal import CreateCOMPLEX8FrequencySeries
 
 
+class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
+        pass
+
+
+lsctables.use_in(LIGOLWContentHandler)
+
+xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", contenthandler=LIGOLWContentHandler)
+template_bank = lsctables.SnglInspiralTable.get_table(xmldoc)
 
 # PARSER OPTIONS * * * * * * * * * * * * * * * * * *
+print "Reading options..."
 parser = optparse.OptionParser()
 parser.add_option("-n", "--number", dest="numTemplates", type=int,
-                help="assign number of waveforms to generate and inspect to NUM", metavar="NUM")
+                                  help="assign number of waveforms to generate and inspect to NUM", metavar="NUM")
 
 parser.add_option("-b", "--bins", dest="numBins", type=int,
-                help="assign number of bins to use in bin_by_duration.py to NUM", metavar="NUM")
+                                  help="assign number of bins to use in bin_by_duration.py to NUM", metavar="NUM")
 
+parser.add_option("-t", "--touse", dest="toUse", type=int,
+                                  help="Assigns the number of the clustering alg. to use to NUM", metavar="NUM")
 
 (options, args) = parser.parse_args()
-#print options.__dict__['numWF']
 # * * * * * * * * * * * * * * * * * * * * * * * * *
+
+toUse = options.__dict__['toUse']
 
 if options.__dict__['numTemplates'] is not None:
         # Enter the number of vertices that the graph has here
@@ -32,82 +75,123 @@ if options.__dict__['numTemplates'] is not None:
 else:
         sys.exit("Please specify an option -n NUM with number of waveforms to expect.")
 
-# Chooses the directory to dump the plots and the .npy waveforms.
-plots_directory = './waveform_graphs'
+# Chooses the directory to dump the plots
+plots_directory = './bin_plots'
 
 # If there isn't a folder in the directory, it creates one.
+print "Checking for direcotry path..."
 if not os.path.exists(plots_directory):
         os.makedirs(plots_directory)
 
-g=igraph.Graph.Read_Ncol("./waveform_complete_graphs/%s/all.ncol" % (str(numNodes)))
-
-weights1 = g.es['weight']
-weights1 = np.around(weights1, 3)
-
-# Converts it to undirected graph
-g.to_undirected(combine_edges="first")
-
-# 'graph2.to_undirected()' strips the graph of its weights
-# so we restore them to the "weight" attribute after
-g.es["weight"] = weights1
-g.es['label'] = g.es['weight']
-
-g.vs['label'] = [0] * len(g.vs)
+print "Importing graph..."
+g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/all_%s/all.txt" % (str(numNodes)), directed=False)
+# NOW 'g' is an UNDIRECTED graph
 
 a = []
 edgeWeights = []
 edgeLabels = []
 neighborList = []
 
-for r in range(len(g.vs)):
-     a.append('%s' % str(r))
-g.vs['label'] = a
+pr
 
-for r in range(len(g.es['weight'])):
-    edgeWeights.append(r)
-    edgeLabels.append(r)
+color_list = ['red', 'blue', 'green',
+                          'cyan', 'pink', 'orange',
+                          'grey', 'yellow', 'white',
+                          'black', 'purple']
 
-for r in range(len(g.vs)):
-     a.append('%s' % str(r))
-g.vs['label'] = a
 
-color_list = ['red','blue','green',
-              'cyan','pink','orange',
-              'grey','yellow','white',
-              'black','purple']
-
-print '\n'
-
-com3 = g.community_edge_betweenness(clusters=3, directed=False, weights='weight')
-print 'Cluster by: Edge betweenness'
-print(com3.as_clustering(n))
-com3AsClustering = com3.as_clustering(n)
-#toPlot = igraph.plot(com3.as_clustering(n), bbox=[2000,2000])
-#toPlot.save('./waveform_graph_plots/plot_%s_edge_betweenness.jpg' % str(numNodes))
-
-print '\n'
-
-com5 = g.community_walktrap(weights='weight',steps=4)
+# THE WALK TRAP ALGORITHM
+com5 = g.community_walktrap(weights='weight', steps=4)
 print 'Cluster by: Walktrap'
 print(com5.as_clustering(n))
+
 com5AsClustering = com5.as_clustering(n)
-#toPlot = igraph.plot(com5.as_clustering(n), bbox=[2000,2000], vertex_color=[color_list[x] for x in com5AsClustering.membership])
-#toPlot.save('./waveform_graph_plots/plot_%s_walktrap.jpg' % str(numNodes))
+toPlot = igraph.plot(com5.as_clustering(n), bbox=[2000,2000], vertex_color=[color_list[x] for x in com5AsClustering.membership])
+toPlot.save(plots_directory + '/walktrap_bin_by_weight_%s_graph.png' % str(len(list(com5AsClustering))))
 
-print '\n'
+# Plotting...
+corM1 = copy.deepcopy(list(com5AsClustering))
+corM2 = copy.deepcopy(list(com5AsClustering))
+for x in range(len(com5AsClustering)):
+        for y in range(len(com5AsClustering[x])):
+                corM1[x][y] = template_bank[int(com5AsClustering[x][y])].mass1
+                print "corM1:", corM1[x][y]
+                print "template_bank M1:", template_bank[int(com5AsClustering[x][y])].mass1
+                print " "
 
-com6 = g.community_fastgreedy(weights='weight')
-print 'Cluster by: Fastgreedy'
-print(com6.as_clustering(n))
-#toPlot = igraph.plot(com6.as_clustering(n), bbox=[2000,2000])
-#toPlot.save('./waveform_graph_plots/plot_%s_fastgreedy.jpg' % str(numNodes))
+                corM2[x][y] = template_bank[int(com5AsClustering[x][y])].mass2
+                print "corM2:", corM2[x][y]
+                print "template_bank M2:", template_bank[int(com5AsClustering[x][y])].mass2
+                print " "
 
-print '\n'
+number = len(com5AsClustering)
+cmap = plt.get_cmap('gnuplot')
+colors = [cmap(i) for i in np.linspace(0, 1, number)]
 
-com7 = g.community_multilevel(weights='weight')
-print 'Cluster by: Multilevel'
-print(com7)
-#toPlot = igraph.plot(com7, bbox=[2000,2000],vertex_color=[color_list[x] for x in com7.membership])
-#toPlot.save('./waveform_graph_plots/plot_%s_multilevel.jpg' % str(numNodes))
+for i, color in enumerate(colors, start=1):
+        plt.plot(corM1[i - 1], corM2[i - 1], "o", markersize=3, markeredgewidth=0.0, color=color,
+                         label='Bin {i}'.format(i=i))
+        # print i
+plt.legend(loc='best')
 
+plt.savefig(plots_directory + '/walktrap_bin_by_weight_%s_plot.png' % str(len(list(com5AsClustering))), dpi=1000)
 
+plt.close()
+
+'''
+if toUse == 3:
+        print '\n'
+        print "Clustering nodes... (Fastgreedy)"
+        print "\n"
+
+        com6 = g.community_fastgreedy(weights='weight')
+        print 'Cluster by: Fastgreedy'
+        print(com6.as_clustering(n))
+        # toPlot = igraph.plot(com6.as_clustering(n), bbox=[2000,2000])
+        # toPlot.save('./waveform_graph_plots/plot_%s_fastgreedy.jpg' % str(numNodes))
+
+        com6AsClustering = com6.as_clustering(n)
+        toPlot = igraph.plot(com6.as_clustering(n), bbox=[2000,2000], vertex_color=[color_list[x] for x in com6AsClustering.membership])
+        toPlot.save(plots_directory + 'walktrap_bin_by_weight_%s_graph.png' % str(len(list(com6AsClustering))))
+
+        # Plotting...
+        corM1 = copy.deepcopy(list(com6AsClustering))
+        corM2 = copy.deepcopy(list(com6AsClustering))
+        for x in range(len(com6AsClustering)):
+                for y in range(len(com6AsClustering[x])):
+                        corM1[x][y] = template_bank[int(com6AsClustering[x][y])].mass1
+                        print "corM1:", corM1[x][y]
+                        print "template_bank M1:", template_bank[int(com6AsClustering[x][y])].mass1
+                        print " "
+
+                        corM2[x][y] = template_bank[int(com6AsClustering[x][y])].mass2
+                        print "corM2:", corM2[x][y]
+                        print "template_bank M2:", template_bank[int(com6AsClustering[x][y])].mass2
+                        print " "
+
+        number = len(com6AsClustering)
+        cmap = plt.get_cmap('gnuplot')
+        colors = [cmap(i) for i in np.linspace(0, 1, number)]
+
+        for i, color in enumerate(colors, start=1):
+                plt.plot(corM1[i - 1], corM2[i - 1], "o", markersize=3, markeredgewidth=0.0, color=color,
+                                 label='Bin {i}'.format(i=i))
+                # print i
+        plt.legend(loc='best')
+
+        plt.savefig(plots_directory + 'fastgreedy_bin_by_weight_%s_plot.png' % str(len(list(com6AsClustering))), dpi=1000)
+
+        plt.close()
+'''
+
+'''
+if toUse == 4:
+        print '\n'
+        print "Clustering nodes... (Multilevel)"
+        print '\n'
+        com7 = g.community_multilevel(weights='weight')
+        print 'Cluster by: Multilevel'
+        print(com7)
+# toPlot = igraph.plot(com7, bbox=[2000,2000],vertex_color=[color_list[x] for x in com7.membership])
+# toPlot.save('./waveform_graph_plots/plot_%s_multilevel.jpg' % str(numNodes))
+'''

@@ -19,6 +19,3 @@ echo generate_matches.py complete
 echo bin_by_duration.py complete
 
 ./bin_by_weight.py -n $1 -b $2
-
-
-

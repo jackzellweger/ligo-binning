@@ -12,6 +12,7 @@ In the XML that this file accesses, all the spins are 0.
 The masses are the only things that matter in this particular template bank # FIXME: Fact check this claim.
 '''
 
+
 # JACK'S IMPORTS * * * * * * * * * * * * * * * *
 import igraph
 import os
@@ -91,10 +92,10 @@ order = -1
 approximant = 'EOBNRv2'
 
 # Chooses the directory to dump the plots and the .npy waveforms.
-plots_directory = './images/plots'
-waveform_directory = './data/waveforms'
-edge_lists_directory = './data/edge_lists'
-waveform_complete_graph_directory = './data/waveform_complete_graphs'
+plots_directory = './plots'
+waveform_directory = './waveforms'
+edge_lists_directory = './edge_lists'
+waveform_complete_graph_directory = './waveform_complete_graphs'
 
 # If there isn't a folder in the directory, it creates one.
 if not os.path.exists(plots_directory):
@@ -112,13 +113,13 @@ edge_list = igraph.Graph.Full(numTemplates)
 
 print "Writing .ncol of graph edges..."
 # This writes an edge list!
-edge_list.write("./data/edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
+edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
 
 # This loads the edge list from the exported file
 # of the form:
 # [[0,1], [0, 2]... [2,3], [3,4]]
 print "Loading edge list..."
-edge_array = np.loadtxt("./data/edge_lists/edge_list_%s.ncol" % str(numTemplates))
+edge_array = np.loadtxt("./edge_lists/edge_list_%s.ncol" % str(numTemplates))
 edge_array = edge_array[generateFrom:generateTo]
 
 # Read in PSD and make it usable
@@ -131,12 +132,12 @@ interpolator = UnivariateSpline(f_orig, np.log(psd.data), s=0)
 noise_model = lambda g: np.where(g < f_max_orig, np.exp(interpolator(g)), np.inf)
 PSD = get_PSD(1. / duration, f_low, f_high, noise_model)
 
-# Generate ASD from PSD (amplitude/power spectral density)
+# Generate ASD
 print "Generating ASD"
 ASD = np.sqrt(PSD)
 
-# Create workspace for match calculation
 print "Creating workspace..."
+# Create workspace for match calculation
 workspace_cache = CreateSBankWorkspaceCache()
 
 # Declare the array we are going to be using in match calculation
@@ -146,21 +147,20 @@ new = [0, 0]
 hplus = [0, 0]
 hcross = [0, 0]
 
-target = open("./data/waveform_complete_graphs/%s_waveform_complete_graph.ncol" % str(int(numTemplates)), 'w')
+target = open("./waveform_complete_graphs/%s_waveform_complete_graph.ncol" % str(int(numTemplates)), 'w')
 
-# FIXME: We might want to add this once we change the other files to read in the new name
-# target = open("./data/waveform_complete_graphs/%s/waveform_complete_graph_from_%s_to_%s_.ncol" % (str(numTemplates), str(generateFrom), str(generateTo)), 'w')
+#  FIXME: We might want to add this once we change the other files to read in the new name
+# target = open("./waveform_complete_graphs/%s/waveform_complete_graph_from_%s_to_%s_.ncol" % (str(numTemplates), str(generateFrom), str(generateTo)), 'w')
 
-# Variables for duration calculation
+# Vars for duration calculation
 fmin = 20.0
 chi = 0
 
-# Time execution
+# TIME EXECUTION * * * * * * * * * * * * * * * * * *
 import time
-start_time = time.time()
-# --
 
-# Arrays
+start_time = time.time()
+# * * * * * * * * * * * * * * * * * * * * * * * * * *
 durArr = []
 countArr = []
 
@@ -172,24 +172,22 @@ for t in range(numTemplates):
         template_bank[t].spin1z,  # Spin 1 Z
         template_bank[t].spin2z  # Sping 2 Z
     )
-
     dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(template_bank[t].mass1 * lal.MSUN_SI,
                                                          template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
     durArr.append(dur)
     countArr.append(t)
-
 # Sort countArr using values from durArr
 index = [x for (y, x) in sorted(zip(durArr, countArr))] # FIXME: This is an index
 
-# Print duration list
 print "Generating duration list..."
 print "Waveform 0 is shortest, with ascending order..."
+
 for m in range(len(index)):
     print "For waveform # %s, (originally # %s)" % (str(m), str(index[m])), " , the duration is %s" % str(
         durArr[index[m]])
 
-# Compare all wave forms to one another
 print "Generating comparisons..."
+# For loop to compare all waveforms to one another
 for current in range(len(edge_array)):
     before = int(edge_array[current][0])
     after = int(edge_array[current][0])
@@ -206,7 +204,7 @@ for current in range(len(edge_array)):
 
     for q in range(r, 2):
         # Loads current waveform
-        # old: fs[q] = np.load("./data/waveforms/%s.npy" % str(int(edge_array[current][q])))
+        # old: fs[q] = np.load("./waveforms/%s.npy" % str(int(edge_array[current][q])))
         hplus, hcross = lalsim.SimInspiralFD(
             0.,  # Phase
             1.0 / duration,  # Sampling interval
@@ -261,10 +259,10 @@ for current in range(len(edge_array)):
 # plt.plot(z)
 # plt.xlabel('time')
 # plt.ylabel('strain')
-# plt.savefig("./images/plots/plot_%s.png" % str(current))
+# plt.savefig("./plots/plot_%s.png" % str(current))
 # plt.close()
 # This just saves the array of data of the waveform.
-# np.save("./data/waveforms/%s.npy" % str(current), z)
+# np.save("./waveforms/%s.npy" % str(current), z)
 
 # Print out execution time:     
 print("Execution Time: %s seconds" % (time.time() - start_time))

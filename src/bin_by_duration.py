@@ -1,12 +1,19 @@
 #!/usr/bin/env python
 
 # JACK'S IMPORTS * * * * * * * * * * * * * * * *
+import copy
 import igraph
 import os
 import optparse
 import sys
+import matplotlib
+
+matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
+import matplotlib.pyplot as plt
 # * * * * * * * * * * * * * * * * * * * * * * *
 
+
+# LalSuite Imports * * * * * * * * * * * * * * * *
 from glue.ligolw import ligolw
 from glue.ligolw import lsctables
 from glue.ligolw import utils as ligolw_utils
@@ -23,6 +30,11 @@ from lalinspiral import CreateSBankWorkspaceCache
 from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
 
+
+# * * * * * * * * * * * * * * * * * * * * * * *
+
+
+# Template bank initialization * * * * * * * * * * * * * * * *
 class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
     pass
 
@@ -31,11 +43,8 @@ lsctables.use_in(LIGOLWContentHandler)
 
 xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", contenthandler=LIGOLWContentHandler)
 template_bank = lsctables.SnglInspiralTable.get_table(xmldoc)
+# * * * * * * * * * * * * * * * * * * * * * * *
 
-
-# We may want to sort the waveforms by duration before and then feed them
-# in to this algorithm after that, so that we can just take the first 100,
-# etc...
 
 # PARSER OPTIONS * * * * * * * * * * * * * * * * * *
 parser = optparse.OptionParser()
@@ -43,44 +52,36 @@ parser.add_option("-n", "--number", dest="numNodes", type=int,
                   help="assign number of waveforms to generate and inspect to NUM", metavar="NUM")
 
 parser.add_option("-b", "--bins", dest="numBins", type=int,
-                  help="assign number of bins to use in bin_by_duration.py to NUM", metavar="NUM")
+                  help="Select the size of the bins to use, assigns to NUM", metavar="NUM")
 
 (options, args) = parser.parse_args()
-# print options.__dict__['numWF']
-# * * * * * * * * * * * * * * * * * * * * * * * * * 
+# * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
-
-if options.__dict__['numNodes'] != None:
-    # Enter the number of vertices that the graph has here
-    # AKA the number of templates to be clustered
+if options.__dict__['numNodes'] is not None:
     numNodes = options.__dict__['numNodes']
     selectTop = options.__dict__['numBins']
 else:
     sys.exit("Please specify an option -n NUM with number of waveforms to expect.")
 
-g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/%s_waveform_complete_graph.ncol" % (str(numNodes)))
+# Chooses the directory to dump the plots
+plots_directory = './bin_plots'
 
-weights1 = g.es['weight']
-weights1 = np.around(weights1, 3)
+# If there isn't a folder in the directory, it creates one.
+if not os.path.exists(plots_directory):
+    os.makedirs(plots_directory)
 
-# Converts it to undirected graph
-g.to_undirected(combine_edges="first")
+g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/all_%u/all.txt" % numNodes)
 
-# 'graph2.to_undirected()' strips the graph of its weights
-# so we restore them to the "weight" attribute after
-g.es["weight"] = weights1
 g.es['label'] = g.es['weight']
-
-# g.es['weight'] = [0] * len(g.es)
-# g.es['label'] = [0] * len(g.es)
 g.vs['label'] = [0] * len(g.vs)
 
+# Instantiate lists
 a = []
 edgeWeights = []
 edgeLabels = []
 neighborList = []
 
+# Set up
 for r in range(len(g.vs)):
     a.append('%s' % str(r))
 g.vs['label'] = a
@@ -91,13 +92,13 @@ for r in range(len(g.es['weight'])):
 
 for r in range(len(g.vs)):
     a.append('%s' % str(r))
-
 g.vs['label'] = a
 
 # Vars for duration calculation
 fmin = 20.0
 chi = 0
 
+# Arrays to handle duration calculations
 durArr = []
 countArr = []
 
@@ -114,15 +115,12 @@ for t in range(numNodes):
                                                          template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
     durArr.append(dur)
     countArr.append(t)
-# Sort countArr using values from durArr
-index = [x for (y, x) in sorted(zip(durArr, countArr))]  # FIXME: This is an index
 
-print "Generating duration list..."
-print "Waveform 0 is shortest, with ascending order..."
+# Set the duration of each vertex
+g.vs['duration'] = durArr
 
-for m in range(len(index)):
-    print "For waveform # %s, (originally # %s)" % (str(m), str(index[m])), " , the duration is %s" % str(
-        durArr[index[m]])
+# Sort countArr using values from durArr, and assign it to 'index' array
+index = [x for (y, x) in sorted(zip(durArr, countArr))]
 
 neighborObjArr = []
 weightNumArr = []
@@ -130,6 +128,7 @@ count = 0
 neighborEdge = []
 aBin = []
 bins = []
+
 for counter in range(numNodes):
     # Clears the list of neighbors to the old vertex
     to_bin = []
@@ -139,11 +138,12 @@ for counter in range(numNodes):
     neighborObjArr = []
     vertexObjArr = []
     vertexObjArr = []
+
     # Sets the new vertex of interest
     # if primaryVertex doesn't exist, we skip the iteration
     try:
         primaryVertex = g.vs.find(label='%s' % str(index[counter]))
-    except:
+    except ValueError:
         continue
 
     # This is a list of neighbors of 'node'
@@ -153,13 +153,12 @@ for counter in range(numNodes):
     source = primaryVertex
 
     for counter1 in neighborList:
-        # This finds the source and target nodes
-        target = g.vs.find(label='%s' % str(int(counter1['label'])))
+        # This finds the target node
+        target = g.vs.find(label='%s' % counter1['label'])
 
         # Appends the target to 'vertexObjArr'.
         vertexObjArr.append(target)
 
-        # print 'from ', str(counter), ' to ', str(int(counter1['label']))
         # This step finds the neighboring veretx corresponding to 'counter1'
         try:
             neighborEdge = g.es.find(_source=source.index, _target=target.index)
@@ -171,21 +170,21 @@ for counter in range(numNodes):
 
         # This appends the weight of the edge to 'weightNumArr'
         weightNumArr.append(neighborEdge['weight'])
+    # Sort neighborObjArr using values from weightNumArr
+    sortedEdgeArr = [x for (y, x) in sorted(zip(weightNumArr, neighborObjArr))]
 
-        # Sort neighborObjArr using values from weightNumArr
-        sortedEdgeArr = [x for (y, x) in sorted(zip(weightNumArr, neighborObjArr))]
+    # Sort vertexObjArr using values from weightNumArr
+    sortedVertexArr = [x for (y, x) in sorted(zip(weightNumArr, vertexObjArr))]
 
-        # Sort vertexObjArr using values from weightNumArr
-        sortedVertexArr = [x for (y, x) in sorted(zip(weightNumArr, vertexObjArr))]
+    '''
+    AT THIS POINT
+    'sortedEdgeArr' is an array of edge objects sorted based on the
+    value of edge 'weight'. 'sortedVertexArr' is an array of edge
+    objects sorted based on the value of edge 'weight' between source and target.
+    '''
 
-    # Now 'sortedEdgeArr' is an array of edge objects sorted based on the
-    # value of edge 'weight'.
-
-    # Now 'sortedVertexArr' is an array of edge objects sorted based on the
-    # value of edge 'weight' between source and target.
-
-    # Now we select the top 'selectTop' elements of 'sortedVertexArr'
-    to_bin = sortedVertexArr[0:selectTop - 1]
+    # Now we select the bottom 'selectTop' elements of 'sortedVertexArr'
+    to_bin = sortedVertexArr[len(sortedVertexArr) - (selectTop - 1):]
 
     # Now we finally add the source vertex to the beginning of the bin.
     to_bin.insert(0, source)
@@ -202,14 +201,36 @@ for counter in range(numNodes):
     g.delete_vertices(to_bin)
     to_bin = []
 
-# Global clean up...
-# bins[-1].append(g.vs['label'][0])
-
 # Print results of the binning...
 print bins
 
+# Generate plots...
+corM1 = copy.deepcopy(bins)
+corM2 = copy.deepcopy(bins)
+
 for x in range(len(bins)):
-    print '[%s]' % str(x), ':',
     for y in range(len(bins[x])):
-        print bins[x][y], ',',
-    print '\n'
+        corM1[x][y] = template_bank[int(bins[x][y])].mass1
+        corM2[x][y] = template_bank[int(bins[x][y])].mass2
+
+'''
+for x in range(len(corM1)):
+        for y in range(len(corM1[x])):
+                if int(corM1[x][y]) < int(corM2[x][y]):
+                        corM1[x][y], corM2[x][y] = corM2[x][y], corM1[x][y]
+                else:
+                        continue
+'''
+
+number = len(bins)
+cmap = plt.get_cmap('gnuplot')
+colors = [cmap(i) for i in np.linspace(0, 1, number)]
+
+for i, color in enumerate(colors, start=1):
+    plt.plot(corM1[i - 1], corM2[i - 1], "o", markersize=3, markeredgewidth=0.0, color=color,
+             label='Bin %s: %s Members' % (i, len(corM2[i-1])))
+
+plt.legend(loc='best')
+plt.savefig('./bin_plots/%s_bin_plot.png' % str(len(bins)), dpi=1000)
+plt.close()
+
