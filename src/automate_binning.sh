@@ -1,9 +1,13 @@
 clear
-
+echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
 echo Will generate and analyze $1 waveforms, binning them into $2 bins using $3 cores
-
 numCores=$3
+echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+
+# Calculates number of edges in final graph
 numberEdges=$(( $1 * ($1 - 1)/2 ))
+
+# Calculates the bin
 binSize=$(( $numberEdges / $3 ))
 
 for i in `seq 20 0`

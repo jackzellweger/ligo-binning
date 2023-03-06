@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# JACK'S IMPORTS * * * * * * * * * * * * * * * *
+# Project Imports * * * * * * * * * * * * * * * *
 import copy
 import igraph
 import os
@@ -29,8 +29,6 @@ import lalinspiral.sbank.waveforms as wf
 from lalinspiral import CreateSBankWorkspaceCache
 from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
-
-
 # * * * * * * * * * * * * * * * * * * * * * * *
 
 

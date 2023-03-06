@@ -1,27 +1,20 @@
 #!/usr/bin/env python
 
-import optparse
+# Project Imports * * * * * * * * * * * * * * * *
 import sys
 import os
-import igraph
-import cairo
-import numpy as np
-import itertools
-import copy
-
-# JACK'S IMPORTS * * * * * * * * * * * * * * * *
-import igraph
-import os
-import optparse
-import sys
-import matplotlib
-
-matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
-import matplotlib.pyplot as plt
 import copy
 import csv
+import numpy as np
+import itertools
+import igraph
+import optparse
+import matplotlib
+matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
+import matplotlib.pyplot as plt
 # * * * * * * * * * * * * * * * * * * * * * * *
 
+# LalSuite Imports * * * * * * * * * * * * * * * *
 from glue.ligolw import ligolw
 from glue.ligolw import lsctables
 from glue.ligolw import utils as ligolw_utils
@@ -37,11 +30,11 @@ import lalinspiral.sbank.waveforms as wf
 from lalinspiral import CreateSBankWorkspaceCache
 from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
+# * * * * * * * * * * * * * * * * * * * * * * *
 
 
 class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
         pass
-
 
 lsctables.use_in(LIGOLWContentHandler)
 

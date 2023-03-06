@@ -12,16 +12,15 @@ In the XML that this file accesses, all the spins are 0.
 The masses are the only things that matter in this particular template bank # FIXME: Fact check this claim.
 '''
 
-
 # JACK'S IMPORTS * * * * * * * * * * * * * * * *
 import igraph
 import os
 import optparse
 import sys
 # * * * * * * * * * * * * * * * * * * * * * * *
+
+# LalSuite Imports * * * * * * * * * * * * * * * *
 from glue.ligolw import ligolw
-
-
 from glue.ligolw import ligolw
 from glue.ligolw import lsctables
 from glue.ligolw import utils as ligolw_utils
@@ -37,23 +36,24 @@ import lalinspiral.sbank.waveforms as wf
 from lalinspiral import CreateSBankWorkspaceCache
 from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
+# * * * * * * * * * * * * * * * * * * * * * * *
 
 # PARSER OPTIONS * * * * * * * * * * * * * * * * * *
 parser = optparse.OptionParser()
+
 parser.add_option("-n", "--number", dest="numTemplates", type=int,
-                  help="assign number of waveforms to generate and inspect to NUM", metavar="NUM", default=10)
-
+                  help="Assign number of waveforms to generate and \
+                  inspect to NUM", metavar="NUM", default=10)
 parser.add_option("-f", "--from", dest="generateFrom", type=int,
-                  help="Start generating at the Nth waveform (inclusive)", metavar="N")
-
+                  help="Start generating at the Nth waveform \
+                  (inclusive)", metavar="N")
 parser.add_option("-t", "--to", dest="generateTo", type=int,
-                  help="Stop generating at the Nth waveform (exclusive)", metavar="N")
+                  help="Stop generating at the Nth waveform \
+                  (exclusive)", metavar="N")
 
 generateFrom = options.__dict__['generateFrom']
 generateTo = options.__dict__['generateTo']
-
 (options, args) = parser.parse_args()
-
 
 # print options.__dict__['numWF']
 # * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -61,17 +61,18 @@ generateTo = options.__dict__['generateTo']
 class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
     pass
 
-
 lsctables.use_in(LIGOLWContentHandler)
 
-xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", contenthandler=LIGOLWContentHandler)
+xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", \
+                                    contenthandler=LIGOLWContentHandler)
 template_bank = lsctables.SnglInspiralTable.get_table(xmldoc)
 
 # Set the number of templates here.
 if options.__dict__['numTemplates'] != None:
     numTemplates = options.__dict__['numTemplates']
 else:
-    sys.exit("Please specify an option -n NUM with number of waveforms to generate and inspect.")
+    sys.exit("Please specify an option -n NUM with number of \
+              waveforms to generate and inspect.")
 
 # 'duration' sets the duration of the waveform
 duration = 32.
