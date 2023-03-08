@@ -24,7 +24,9 @@ There are three distinct stages of a black hole merger.
 
 The parameters of different binary black hole systems affect how black holes merge at all these stages, resulting in wildly different binary black hole signatures. However, generally, all these  all come together to make a gravitational wave signature that looks like this:
 
-<img src="./images/wave_signature.jpg" width="600">
+<p align="center">
+	<img src="./images/wave_signature.jpg" width="600">
+</p>
 
 # The Project
 
@@ -49,7 +51,9 @@ These spikes are relatively common, and most of them end up not being gravitatio
 
 We calculate $\chi^2$. A low $\chi^2$ means that the trigger is a good fit to the GW template. Triggers that only appear in one of the LIGO instruments are assumed to be noise, while triggers that appear in both detectors within a light travel time are considered GW candidates. If these two tests pass, we have ourselves a candidate!
 
-<img src="./images/snr.jpg" width="600">
+<p align="center">
+	<img src="./images/snr.jpg" width="600">
+</p>
 
 ### Binning & probability density functions
 
@@ -65,7 +69,9 @@ Ideally, the background noise characteristics should be calculated individually 
 
 How do we determine this false-positive likelihood given all this variation? One of the techniques we use is to form a probability distribution using a combination of both $\chi^2$ and $\frac{\chi^2}{\mathrm{SNR}^2}$…
 
-<img src="./images/chisquare_snr.jpg" width="600">
+<p align="center">
+	<img src="./images/chisquare_snr.jpg" width="600">
+</p>
 
 If a gravitational wave candidate falls within the populated area of its waveform PDF, it is likely just a false alarm. If the candidate falls outside of a main cluster, the noise pattern is categorically different, and there are better chances that the candidate was an actual gravitational wave detection. 
 
@@ -125,7 +131,9 @@ To identify natural clusters in the waveforms, we had to determine the degree of
 
 We can represent the resulting relationships with a complete graph as seen below. In this image, each node represents a waveform template, and each edge represents its similarity to another waveform template.
 
-<img src="./images/25_edge_betweenness.jpg" width="600">
+<p align="center">
+	<img src="./images/25_edge_betweenness.jpg" width="600">
+</p>
 
 As we add more and more waveforms (nodes) to this complete graph, we get a combinatorial explosion; the number of necessary comparisons between waveform templates (edges) increases by $\frac{n(n-1)}{2}$. In computational complexity terms, that’s $n^2$, which isn’t great, especially when we’re dealing with thousands of nodes. There isn’t really a quick way around this though. Since we’re prioritizing accuracy, and don’t have to run this routine constantly, we didn’t focus on optimizing the number of calculations or comparisons in our routine.
 
