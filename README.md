@@ -24,7 +24,7 @@ There are three distinct stages of a black hole merger.
 
 The parameters of different binary black hole systems affect how black holes merge at all these stages, resulting in wildly different binary black hole signatures. However, generally, all these  all come together to make a gravitational wave signature that looks like this:
 
-<img src="./images/wave_signature.jpg" width="400">
+<img src="./images/wave_signature.jpg" width="600">
 
 # The Project
 
@@ -49,7 +49,7 @@ These spikes are relatively common, and most of them end up not being gravitatio
 
 We calculate $\chi^2$. A low $\chi^2$ means that the trigger is a good fit to the GW template. Triggers that only appear in one of the LIGO instruments are assumed to be noise, while triggers that appear in both detectors within a light travel time are considered GW candidates. If these two tests pass, we have ourselves a candidate!
 
-<img src="./images/snr.jpg" width="400">
+<img src="./images/snr.jpg" width="600">
 
 ### Binning & probability density functions
 
@@ -65,7 +65,7 @@ Ideally, the background noise characteristics should be calculated individually 
 
 How do we determine this false-positive likelihood given all this variation? One of the techniques we use is to form a probability distribution using a combination of both $\chi^2$ and $\frac{\chi^2}{\mathrm{SNR}^2}$…
 
-<img src="./images/chisquare_snr.jpg" width="400">
+<img src="./images/chisquare_snr.jpg" width="600">
 
 If a gravitational wave candidate falls within the populated area of its waveform PDF, it is likely just a false alarm. If the candidate falls outside of a main cluster, the noise pattern is categorically different, and there are better chances that the candidate was an actual gravitational wave detection. 
 
@@ -91,7 +91,7 @@ Since there are no black noise triggers in its vicinity, it is very difficult to
 
 This all comes to life in the figure below, where we plot a GW candidate in red.
 
-<img src="./images/chisquare_snr_2.jpg" width="400">
+<img src="./images/chisquare_snr_2.jpg" width="600">
 
 ### My Job
 
