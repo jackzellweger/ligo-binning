@@ -91,7 +91,9 @@ Since there are no black noise triggers in its vicinity, it is very difficult to
 
 This all comes to life in the figure below, where we plot a GW candidate in red.
 
-<img src="./images/chisquare_snr_2.jpg" width="600">
+<p align="center">
+	<img src="./images/chisquare_snr_2.jpg" width="600">
+</p>
 
 ### My Job
 
