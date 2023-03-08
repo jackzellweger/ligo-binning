@@ -123,7 +123,7 @@ To identify natural clusters in the waveforms, we had to determine the degree of
 
 We can represent the resulting relationships with a complete graph as seen below. In this image, each node represents a waveform template, and each edge represents its similarity to another waveform template.
 
-<img src="./images/25_edge_betweenness.jpg" width="400">
+<img src="./images/25_edge_betweenness.jpg" width="600">
 
 As we add more and more waveforms (nodes) to this complete graph, we get a combinatorial explosion; the number of necessary comparisons between waveform templates (edges) increases by $\frac{n(n-1)}{2}$. In computational complexity terms, that’s $n^2$, which isn’t great, especially when we’re dealing with thousands of nodes. There isn’t really a quick way around this though. Since we’re prioritizing accuracy, and don’t have to run this routine constantly, we didn’t focus on optimizing the number of calculations or comparisons in our routine.
 
