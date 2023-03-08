@@ -25,7 +25,7 @@ There are three distinct stages of a black hole merger.
 The parameters of different binary black hole systems affect how black holes merge at all these stages, resulting in wildly different binary black hole signatures. However, generally, all these  all come together to make a gravitational wave signature that looks like this:
 
 <p align="center">
-	<img src="./images/wave_signature.jpg" width="600">
+	<img src="./images/wave_signature.jpg" width="400">
 </p>
 
 # The Project
