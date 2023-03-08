@@ -112,8 +112,8 @@ if not os.path.exists(waveform_complete_graph_directory):
 print "Creating graph edges..."
 edge_list = igraph.Graph.Full(numTemplates)
 
+# This writes an edge list
 print "Writing .ncol of graph edges..."
-# This writes an edge list!
 edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
 
 # This loads the edge list from the exported file
