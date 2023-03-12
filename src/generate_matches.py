@@ -17,6 +17,7 @@ import igraph
 import os
 import optparse
 import sys
+import time
 # * * * * * * * * * * * * * * * * * * * * * * *
 
 # LalSuite Imports * * * * * * * * * * * * * * * *
@@ -150,18 +151,15 @@ hcross = [0, 0]
 
 target = open("./waveform_complete_graphs/%s_waveform_complete_graph.ncol" % str(int(numTemplates)), 'w')
 
-#  FIXME: We might want to add this once we change the other files to read in the new name
-# target = open("./waveform_complete_graphs/%s/waveform_complete_graph_from_%s_to_%s_.ncol" % (str(numTemplates), str(generateFrom), str(generateTo)), 'w')
-
 # Vars for duration calculation
 fmin = 20.0
 chi = 0
 
 # TIME EXECUTION * * * * * * * * * * * * * * * * * *
-import time
-
 start_time = time.time()
 # * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+# SORT WAVEFORMS BY DURATION * * * * * * * * * * * *
 durArr = []
 countArr = []
 
@@ -177,25 +175,37 @@ for t in range(numTemplates):
                                                          template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
     durArr.append(dur)
     countArr.append(t)
+
 # Sort countArr using values from durArr
-index = [x for (y, x) in sorted(zip(durArr, countArr))] # FIXME: This is an index
+index = [x for (y, x) in sorted(zip(durArr, countArr))]
 
 print "Generating duration list..."
 print "Waveform 0 is shortest, with ascending order..."
-
 for m in range(len(index)):
-    print "For waveform # %s, (originally # %s)" % (str(m), str(index[m])), " , the duration is %s" % str(
+    print "For waveform # %s, (originally # %s)" % (str(m), str(index[m])), " ,the duration is %s" % str(
         durArr[index[m]])
+# * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+# COMPARE ALL WAVEFORMS TO ONE ANOTHER * * * * * * * 
 print "Generating comparisons..."
+
 # For loop to compare all waveforms to one another
 for current in range(len(edge_array)):
-    before = int(edge_array[current][0])
-    after = int(edge_array[current][0])
 
+    # Declare before and after vars to keep track
+    # This is a primitive effort to 'memoize the function'
+    before = int(index[edge_array[current][0]])
+    after = int(index[edge_array[current][0]])
+
+    # Set before if there is a before
     if current != 0:
-        before = int(edge_array[current - 1][0])
+        before = int(index[edge_array[current - 1][0]])
 
+    # Are the two checks before the 'and' redundant here?
+    # No they are not.
+    # --
+    # 'before' will only equal 'after' if we're on the first loop,
+    # or two lines start with the same waveform.
     if (before == after and current != 0):
         r = 1
     # print "Not generating another template 0"
@@ -204,19 +214,19 @@ for current in range(len(edge_array)):
     # print "Generating a new template 0"
 
     for q in range(r, 2):
+
         # Loads current waveform
-        # old: fs[q] = np.load("./waveforms/%s.npy" % str(int(edge_array[current][q])))
         hplus, hcross = lalsim.SimInspiralFD(
             0.,  # Phase
             1.0 / duration,  # Sampling interval
-            lal.MSUN_SI * template_bank[int(edge_array[current][q])].mass1,  # Mass 1
-            lal.MSUN_SI * template_bank[int(edge_array[current][q])].mass2,  # Mass 2
-            template_bank[int(edge_array[current][q])].spin1x,  # Spins
-            template_bank[int(edge_array[current][q])].spin1y,
-            template_bank[int(edge_array[current][q])].spin1z,
-            template_bank[int(edge_array[current][q])].spin2x,
-            template_bank[int(edge_array[current][q])].spin2y,
-            template_bank[int(edge_array[current][q])].spin2z,
+            lal.MSUN_SI * template_bank[int(index[edge_array[current][q]])].mass1,  # Mass 1
+            lal.MSUN_SI * template_bank[int(index[edge_array[current][q]])].mass2,  # Mass 2
+            template_bank[int(index[edge_array[current][q]])].spin1x,  # Spins
+            template_bank[int(index[edge_array[current][q]])].spin1y,
+            template_bank[int(index[edge_array[current][q]])].spin1z,
+            template_bank[int(index[edge_array[current][q]])].spin2x,
+            template_bank[int(index[edge_array[current][q]])].spin2y,
+            template_bank[int(index[edge_array[current][q]])].spin2z,
             f_low,
             f_high,
             0.,  # FIXME: chosen until suitable default value for f_ref is defined
@@ -254,6 +264,7 @@ for current in range(len(edge_array)):
                                str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
 
     target.write("\n")
+# * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 # This generates a plot of the 'current' waveform.
 # z = hplus.data.data
