@@ -113,16 +113,6 @@ The binning was done in different ways at the time and on physical parameters, l
 
 Also, I think we found that walktrap "worked" best.
 
-# Code
-
-Over the course of my time at LIGO, I developed a number of subroutines called and orchestrated by a central shell script. This shell script 
-
-`GstLAL` is a software package developed by the LIGO Scientific Collaboration (LSC) used to analyze data from LIGO's gravitational wave detectors.
-
-One of the main uses of `GstLAL` is to compare the data off the detector to how we'd expect gravitational waveforms to show up on the detector, and looking for matches or correlations between the two.
-
-`GstLAL` includes a number of tools and algorithms that are specifically designed to optimize the search for gravitational waves. For example, it includes tools for generating theoretical templates, for filtering and conditioning the data, and for calculating statistical significance.
-
 # The Matching Algorithm
 
 Over the course of my time at LIGO, I developed a number of subroutines called and orchestrated by a central shell script. This shell script 
