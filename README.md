@@ -125,15 +125,21 @@ One of the main uses of `GstLAL` is to compare the data off the detector to how 
 
 # The Matching Algorithm
 
+Over the course of my time at LIGO, I developed a number of subroutines called and orchestrated by a central shell script. This shell script 
+
+`GstLAL` **(Generalized s-transform Time-domain LIGO Algorithm Library) [true?]** is a software package developed by the LIGO Scientific Collaboration (LSC) used to analyze data from LIGO's gravitational wave detectors.
+
+One of the main uses of `GstLAL` is to compare the data off the detector to how we'd expect gravitational waveforms to show up on the detector, and looking for matches or correlations between the two.
+
+`GstLAL` includes a number of tools and algorithms that are specifically designed to optimize the search for gravitational waves. For example, it includes tools for generating theoretical templates, for filtering and conditioning the data, and for calculating statistical significance.
+
 ### Parallelization using Python’s `optparse.OptionParser()` and Bash
 
 To identify natural clusters in the waveforms, we had to determine the degree of similarity between each pair of waveforms in our set. Essentially, we needed to compare every waveform in our set to every other waveform and assign each pair a "similarity score." We accomplished this using the `InspiralSBankComputeMatch()` function, which returns a floating-point number between 0 and 1 that represents the degree of similarity between two waveforms.
 
 We can represent the resulting relationships with a complete graph as seen below. In this image, each node represents a waveform template, and each edge represents its similarity to another waveform template.
 
-<p align="center">
-	<img src="./images/25_edge_betweenness.jpg" width="600">
-</p>
+![plot_25_edge_betweenness.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/89bd206c-d665-4ba8-8e81-909eee9b6d90/plot_25_edge_betweenness.jpg)
 
 As we add more and more waveforms (nodes) to this complete graph, we get a combinatorial explosion; the number of necessary comparisons between waveform templates (edges) increases by $\frac{n(n-1)}{2}$. In computational complexity terms, that’s $n^2$, which isn’t great, especially when we’re dealing with thousands of nodes. There isn’t really a quick way around this though. Since we’re prioritizing accuracy, and don’t have to run this routine constantly, we didn’t focus on optimizing the number of calculations or comparisons in our routine.
 
@@ -176,6 +182,11 @@ echo '* * * * * * * *'
 printf "\n \n"
 ```
 
+<aside>
+💡 There could be an issue here if the number of templates is a prime number.
+
+</aside>
+
 Though we may leave a couple cores out of the calculation this way, it’s a way to keep the code and the subroutine simple to ensure each core has the same number of jobs to perform.
 
 After we’ve determined the number of threads to create, we run a for loop to launch all the Python scripts. We use a for loop with a few variables include `$numCores`, `$binSize`, `start` and `end` to divide up the jobs and instruct the scripts which part of the graph to tackle.
@@ -189,8 +200,6 @@ do
 done
 echo 'generate_matches.py complete'
 ```
-
-### So, how does `generate_matches.py` actually work?
 
 We pass a few parameters to the `generage_matches.py`, with the following flags:
 
@@ -233,11 +242,13 @@ generateTo = options.__dict__['generateTo']
 
 We use `InspiralSBankComputeMatch()` to compare templates neighboring templates (nodes). As I mentioned briefly above, we have ensure that each `generate_matches.py` is on the same page.
 
+### Creating A List of Edges That Align For All Threads
+
 Why is this so important though? We need to create a list that everyone can work off of in order to merge the work later. The size and shape of the complete graph represented in list form changes pretty dramatically
 
-Therefore, we pass the number of templates into each python instance, generate the complete edge list with `edge_list = igraph.Graph.Full(numTemplates)`, and then
+Therefore, we pass the number of templates into each python instance, generate the complete edge list with `edge_list = igraph.Graph.Full(numTemplates)`.
 
-```bash
+```python
 # Create list of edge relations
 print "Creating graph edges..."
 edge_list = igraph.Graph.Full(numTemplates)
@@ -251,209 +262,215 @@ print "Writing .ncol of graph edges..."
 edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
 ```
 
-I’d probably have done the above differently if I were writing this program today. I can see some ways that 50 different scripts writing and reading files with the same name to the operating systems at basically the same time to the same place could cause some problems. Fortunately, we never had any issues the way this was written.
+<aside>
+🚧 I’d probably have done the above differently if I were writing this program today. I can see some ways that 50 different scripts writing and reading files with the same name to the operating systems at basically the same time to the same place could cause some problems. Fortunately, we never had any issues the way this was written.
 
-After we read the edge array back in, we allocate ourselves…
+</aside>
 
-```bash
-edge_array = edge_array[generateFrom:generateTo]
-```
+With the code above, we’re basically generating a list of all the edges in a complete graph given a certain number of nodes. Each item in the list we’re generating corresponds to an edge—represented by the black lines connecting the nodes in this visual.
 
-### Prepare waveforms for comparison
+![https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Complete_graph_K7.svg/800px-Complete_graph_K7.svg.png](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Complete_graph_K7.svg/800px-Complete_graph_K7.svg.png)
 
-In order to make accurate comparisons, we need to treat the waveforms
-
-The square of the standard deviation of Gaussian noise is equal to the integral of the PSD over all frequencies. Therefore, the variable name "sigmasq" is a convenient and recognizable way to denote the PSD.
-
-```bash
-for q in range(r, 2):
-	# Pack up waveform into a freq. series usable by match function
-	new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
-																				 fs[q].epoch,
-																				 fs[q].f0,
-																				 fs[q].deltaF,
-																				 fs[q].sampleUnits,
-																				 fs[q].data.length)
-	
-	# Create a copy of the frequency series
-	new[q].data.data[:] = fs[q].data.data[:]
-	
-	# Whiten the copy using the ASD
-	new[q].data.data /= ASD
-	
-	# Normalize the waveform using the ASD and PSD of the freq-domain series
-	sigmasq[q] = float(np.vdot(new[q].data.data,
-										 new[q].data.data).real * 4 * 1. / duration)
-	new[q].data.data /= sigmasq[q] ** 0.5
-```
-
-### Calculate matches between waveforms
-
-If we inspect iGraph’s documentation, their `.ncol` format works like this:
-
-```
-...
-10 18 0.85159153964
-10 19 0.838519020742
-11 12 0.994238606918
-11 13 0.978512742562
-11 14 0.958788907317
-11 15 0.937414268629
-...
-```
-
-It’s a very simple format where, on each line, the nodes are referenced in the first two.
-
-```bash
-# Calculate match of each waveform with one another
-target.write('%s %s %s' % (str(index[int(edge_array[current][0])]),
-													 str(index[int(edge_array[current][1])]),
-                           str(InspiralSBankComputeMatch(
-															 new[0], new[1], workspace_cache))))
-```
+As mentioned above, as you increase the number of nodes in a complete graph, the number of edges goes up by $\frac{n(n-1)}{2}$. In this case, the number of nodes in our graph is `numTemplates`, the number of waveform templates in our template bank. The text representation of the complete graph looks like this…
 
 ```python
-# Create list of edge relations
-print "Creating graph edges..."
-edge_list = igraph.Graph.Full(numTemplates)
-
-print "Writing .ncol of graph edges..."
-# This writes an edge list!
-edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
-
-# This loads the edge list from the exported file
-# of the form:
-# [[0,1], [0, 2]... [2,3], [3,4]]
-print "Loading edge list..."
-edge_array = np.loadtxt("./edge_lists/edge_list_%s.ncol" % str(numTemplates))
-edge_array = edge_array[generateFrom:generateTo]
-# ...
+0 1
+0 2
+0 3
+...
+0 15
+0 16
+0 17
+...
+1 11
+1 12
+1 13
+...
+2 14
+2 15
+2 16
 ```
 
-Then we would…
+In this scheme, each of the numbers corresponds to a waveform template i.e. `0`, `14`, `2`, all correspond to waveform templates with those IDs. Each *pair* of numbers corresponds to an edge between two waveform templates i.e. `0 17`, `1 12`, and `2 14` are all edges that represent similarity between two waveform templates.
+
+After we generate the list of edges that corresponds to the number of waveform templates we have in our template bank, we focus in on just that part of the list that has been assigned to us via the bash script `automate_matching.sh`.
+
+```python
+edge_array = edge_array[generateFrom:generateTo]
+```
+
+### Sorting The Waveform Templates By Duration
+
+To maintain neatness, we have decided to reorder the waveforms based on their duration. This means that waveform `0` corresponds to the shortest waveform, waveform `1` corresponds to the second-shortest waveform, and so on. Calculating waveform duration hardly takes any time at all, as it does not require numerical calculation. It is a simple formula that uses parameters, such as masses and spins, corresponding to the theoretical bodies that would generate each template waveform.
+
+First, we declare some arrays and variables we’re going to use in our duration calculation and sorting…
+
+```python
+# Declare the array we are going to be using in match calculation
+fs = [0, 0]
+sigmasq = [0, 0]
+new = [0, 0]
+hplus = [0, 0]
+hcross = [0, 0]
+
+# Vars for duration calculation
+fmin = 20.0
+chi = 0
+
+# Declare tracking indices
+durArr = []
+countArr = []
+```
+
+Then we calculate the duration for each template waveform…
+
+```python
+for t in range(numTemplates):
+    # Duration calculation takes in only masses and spins
+    chi = lalsim.SimIMRPhenomBComputeChi(
+        template_bank[t].mass1,  # Mass 1
+        template_bank[t].mass2,  # Mass 2
+        template_bank[t].spin1z,  # Spin 1 Z
+        template_bank[t].spin2z  # Sping 2 Z
+    )
+    dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(template_bank[t].mass1 * lal.MSUN_SI,
+                                                         template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
+    durArr.append(dur)
+    countArr.append(t)
+
+```
+
+Next, we do some non-destructive re-ordering. We build an array `index` who’s entries contain the IDs of the waveforms, ordered by waveform duration. So, for example, in `index = [6, 45, 87, 31, 21, 47]`, waveform `6` is the shortest in duration, waveform `45` is the second-shortest in duration, waveform `87` is the third-shortest in duration, and so on. But we still have the original arrays just in case we need to reference those later.
+
+```python
+# Sort countArr using values from durArr
+index = [x for (y, x) in sorted(zip(durArr, countArr))]
+
+print "Generating duration list..."
+print "Waveform 0 is shortest, with ascending order..."
+
+# Print out each waveform ID, and it's duration starting with the shortest
+for m in range(len(index)):
+    print "For waveform # %s, (originally # %s)" % (str(m),
+					str(index[m])), " ,the duration is %s" % str(durArr[index[m]])
+```
+
+### Matching The Waveforms: Does This Count As Memoization?
+
+A reminder that our edge list looks like this…
+
+```python
+...
+3 24
+3 25
+3 26
+3 27
+3 28
+3 29
+4 5
+4 6
+4 7
+...
+```
+
+Notice that it’s ordered pretty conveniently: edges are given as nested lists, where the first integer is fixed as it moves through all its edges corresponding to that node. To save time calculating the waveforms (one of the most expensive computations we do), we only generate the first waveform once. As we move down the list with the same first index, we only re-generate the second waveform.
+
+Here’s how I implemented that time-saving measure. Maybe not the most elegant, but it gets the job done!
 
 ```python
 for current in range(len(edge_array)):
-	# ... generate comparison ...
+
+    before = int(edge_array[current][0])
+    after = int(edge_array[current][0])
+
+    if current != 0:
+        before = int(edge_array[current - 1][0])
+
+    if (before == after and current != 0):
+				r = 1
+		    # print "Not generating another template [0]"
+    else:
+        r = 0
+		    # print "Generating a new template [0]"
+
+    for q in range(r, 2):
+
+        # ... COMPARE WAVEFORMS ...
 ```
+
+We could have improved this memoization. As it stands, we save a lot of time, but we are still doing duplicate work on the order of $\frac{n(n+1)}{2}$, where $n$ is the number of templates. The time complexity of this problem is $\mathcal{O}(n^2)$, which isn’t great. We could eliminate this extra work by storing each waveform, but decided this was acceptable and to work on the research itself instead of dedicating time to these kinds of optimizations.
+
+The following code is in the above for loop, and uses a huge list of parameters
 
 ```python
-# PARSER OPTIONS * * * * * * * * * * * * * * * * * *
-# Initialize the option parser
-parser = optparse.OptionParser()
-
-# Indicate number of waveforms in the template bank .xml file
-parser.add_option("-n", "--number", dest="numTemplates", type=int,
-                  help="Assign number of waveforms to generate and \
-									inspect to NUM", metavar="NUM", default=10)
-
-# A flag to let the program know which waveform in the list to start
-# generating from
-parser.add_option("-f", "--from", dest="generateFrom", type=int,
-                  help="Start generating at the Nth waveform \
-									(inclusive)", metavar="N")
-
-# A flag to let the program know which waveform in the list to end
-# generating
-parser.add_option("-t", "--to", dest="generateTo", type=int,
-                  help="Stop generating at the Nth waveform \
-									(exclusive)", metavar="N")
-
-# Ingest options
-generateFrom = options.__dict__['generateFrom']
-generateTo = options.__dict__['generateTo']
-(options, args) = parser.parse_args()
-# * * * * * * * * * * * * * * * * * * * * * * * * *
+for q in range(r, 2):
+        # Loads current waveform
+        hplus, hcross = lalsim.SimInspiralFD(
+            0.,  # Phase
+            1.0 / duration,  # Sampling interval
+            1.e6 * lal.PC_SI,  # distance
+	          # ... MORE PARAMS ...
+        )
 ```
 
-This parallelization cut the time it took to run from >48 hours to about 45 minutes. We could run the code, check for bugs, check for increased sensitivities, and then re-run with tweaked parameters much faster after that.
+Then we perform some additional data prep, including conversion to a [complex frequency series](https://lscsoft.docs.ligo.org/lalsuite/lal/struct_c_o_m_p_l_e_x8_frequency_series.html), whitening, and other normalization. All this makes the waveform more useable for the match function.
 
-In our `automate_matching.sh` bash file, we can see how we feed options to the 
+```python
+# Convert to a complex frequency series
+new[q] = new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name, 
+						fs[q].epoch,
+						fs[q].f0,
+						fs[q].deltaF,
+						fs[q].sampleUnits,
+						fs[q].data.length)
+# ...
+
+# FS: Whiten waveform
+new[q].data.data /= ASD
+
+# FS: Normalize waveform
+sigmasq[q] = float(np.vdot(new[q].data.data, new[q].data.data).real * 4 * 1. / duration)
+new[q].data.data /= sigmasq[q] ** 0.5
+
+# Calculate match of each waveform with one another
+# and write to file on disk
+target.write('%s %s %s' % (str(index[int(edge_array[current][0])]), str(index[int(edge_array[current][1])]),
+                           str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
+target.write("\n")
+```
+
+### Taking Time
+
+Comparison and matching doesn’t actually take up that much time; actually generating the waveform shapes based on the parameters we feed in does, however. In order to time these operations, I save the a time before the computation starts with `start_time = time.time()`. At the end of the script, I output the difference between start and end time with with `(time.time() - start_time))`.
+
+After all the scripts are done running, we run our victory lap…
 
 ```bash
-clear
-echo '* * * * * * * * * * * *'
-echo Will generate and analyze complete relations between $1 waveforms using $2 cores
-echo '* * * * * * * * * * * *' 
-printf "\n \n"
-
-numCores=$2
-numberEdges=$(( $1 * ($1 - 1)/2 ))
-binSize=$(( $numberEdges / $2 ))
-
-for i in `seq $2 0`
-do
-        if [ $inumberEdges % $i -eq 0 ]  
-        then $numCores= $i
-        fi
-done
-
-echo '* * * * * * * *' 
-echo 'Will use $i cores'
-echo '* * * * * * * *' 
-printf "\n \n"
-
-ifIt=$(($numberEdges % $numCores))
-mult=$(($numberEdges / $numCores))
-
-if let '$ifIt != 0'; then
-        exit
-fi
-
-for i in `seq 1 $numCores`
-do
-        start=$(( ($i - 1) * $binSize))
-        end=$(($i * $binSize))
-        ./old_matching.py -n $1 -f $start -t $end &
-done
-
 echo 'generate_matches.py complete'
 ```
 
-## The Binning Algorithm
+### This Is What The Waveforms Look Like
 
-```bash
-clear
-echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
-echo 'Will generate and analyze complete relations between $1 waveforms using $2 cores'
-echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *' 
-printf "\n \n"
+![plot_3.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b330aa47-6143-4206-9af1-3ddf547c0da0/plot_3.png)
 
-numCores=$2
-numberEdges=$(( $1 * ($1 - 1)/2 ))
-binSize=$(( $numberEdges / $2 ))
+![plot_14.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/105ccb5c-0661-4eed-8b07-a266d1df376b/plot_14.png)
 
-for i in `seq $2 0`
-do
-        if [ $inumberEdges % $i -eq 0 ]  
-        then $numCores= $i
-        fi
-done
+![plot_75.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f2ab0073-ffab-4bcc-a137-6c3280909239/plot_75.png)
 
-echo '* * * * * * * *' 
-echo 'Will use $i cores'
-echo '* * * * * * * *' 
-printf "\n \n"
+![plot_28.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8b91d61b-a564-4687-ad45-75eae04d8b0c/plot_28.png)
 
-ifIt=$(($numberEdges % $numCores))
-mult=$(($numberEdges / $numCores))
+# Binning The Template Waveforms
 
-if let '$ifIt != 0'; then
-        exit
-fi
+### How To Best Cluster Graphs?
 
-for i in `seq 1 $numCores`
-do
-        start=$(( ($i - 1) * $binSize))
-        end=$(($i * $binSize))
-        ./generate_matches.py -n $1 -f $start -t $end &
-done
+Now that we’ve calculated all the similarities of all the waveforms to all the other waveforms, it’s time to begin grouping them.
 
-echo 'generate_matches.py complete'
-```
+This is where I was able to use some of my creativity, where the real experimentation came in. What was the best way to cluster complete graphs based on edge weights? My first experiment on day one was to plug in some dummy numbers into Mathematica. Mathematica has some interesting graph clustering functions including `FindGraphCommunities[]` and `CommunityGraphPlot[]` for visualizing it.
 
-# Binning
+---
 
-Waveform binning is a technique used to group gravitational waveforms into categories or "bins" based on certain characteristics, which can improve the efficiency of gravitational wave searches, and increase instrument sensitivity (or so we thought).
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dc9dfbc2-1fae-4e8a-aaca-a2d3ca0dbbe8/Untitled.png)
 
-# The Code
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8d28a12b-6b4a-47a5-a562-2bf25a76196d/Untitled.png)
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3e8ae9fd-c14f-4a0e-94f9-61f45892d383/Untitled.png)
