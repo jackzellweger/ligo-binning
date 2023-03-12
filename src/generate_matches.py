@@ -194,12 +194,12 @@ for current in range(len(edge_array)):
 
     # Declare before and after vars to keep track
     # This is a primitive effort to 'memoize the function'
-    before = int(index[edge_array[current][0]])
-    after = int(index[edge_array[current][0]])
+    before = int(edge_array[current][0])
+    after = int(edge_array[current][0])
 
     # Set before if there is a before
     if current != 0:
-        before = int(index[edge_array[current - 1][0]])
+        before = int(edge_array[current - 1][0])
 
     # Are the two checks before the 'and' redundant here?
     # No they are not.
@@ -219,14 +219,14 @@ for current in range(len(edge_array)):
         hplus, hcross = lalsim.SimInspiralFD(
             0.,  # Phase
             1.0 / duration,  # Sampling interval
-            lal.MSUN_SI * template_bank[int(index[edge_array[current][q]])].mass1,  # Mass 1
-            lal.MSUN_SI * template_bank[int(index[edge_array[current][q]])].mass2,  # Mass 2
-            template_bank[int(index[edge_array[current][q]])].spin1x,  # Spins
-            template_bank[int(index[edge_array[current][q]])].spin1y,
-            template_bank[int(index[edge_array[current][q]])].spin1z,
-            template_bank[int(index[edge_array[current][q]])].spin2x,
-            template_bank[int(index[edge_array[current][q]])].spin2y,
-            template_bank[int(index[edge_array[current][q]])].spin2z,
+            lal.MSUN_SI * template_bank[int(edge_array[current][q])].mass1,  # Mass 1
+            lal.MSUN_SI * template_bank[int(edge_array[current][q])].mass2,  # Mass 2
+            template_bank[int(edge_array[current][q])].spin1x,  # Spins
+            template_bank[int(edge_array[current][q])].spin1y,
+            template_bank[int(edge_array[current][q])].spin1z,
+            template_bank[int(edge_array[current][q])].spin2x,
+            template_bank[int(edge_array[current][q])].spin2y,
+            template_bank[int(edge_array[current][q])].spin2z,
             f_low,
             f_high,
             0.,  # FIXME: chosen until suitable default value for f_ref is defined
