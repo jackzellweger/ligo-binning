@@ -1,4 +1,5 @@
 clear
+
 echo '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
 echo Will generate and analyze $1 waveforms, binning them into $2 bins using $3 cores
 numCores=$3

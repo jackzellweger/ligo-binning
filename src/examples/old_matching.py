@@ -194,29 +194,3 @@ for current in range(len(edge_array)):
                                str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
 
     target.write("\n")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

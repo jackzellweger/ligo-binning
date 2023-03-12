@@ -264,17 +264,6 @@ for current in range(len(edge_array)):
                                str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
 
     target.write("\n")
-# * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-# This generates a plot of the 'current' waveform.
-# z = hplus.data.data
-# plt.plot(z)
-# plt.xlabel('time')
-# plt.ylabel('strain')
-# plt.savefig("./plots/plot_%s.png" % str(current))
-# plt.close()
-# This just saves the array of data of the waveform.
-# np.save("./waveforms/%s.npy" % str(current), z)
 
 # Print out execution time:     
 print("Execution Time: %s seconds" % (time.time() - start_time))
