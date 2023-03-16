@@ -7,11 +7,9 @@ import os
 import optparse
 import sys
 import matplotlib
-
 matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as plt
 # * * * * * * * * * * * * * * * * * * * * * * *
-
 
 # LalSuite Imports * * * * * * * * * * * * * * * *
 from glue.ligolw import ligolw
@@ -31,27 +29,20 @@ from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
 # * * * * * * * * * * * * * * * * * * * * * * *
 
-
 # Template bank initialization * * * * * * * * * * * * * * * *
 class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
     pass
-
-
 lsctables.use_in(LIGOLWContentHandler)
-
 xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", contenthandler=LIGOLWContentHandler)
 template_bank = lsctables.SnglInspiralTable.get_table(xmldoc)
 # * * * * * * * * * * * * * * * * * * * * * * *
-
 
 # PARSER OPTIONS * * * * * * * * * * * * * * * * * *
 parser = optparse.OptionParser()
 parser.add_option("-n", "--number", dest="numNodes", type=int,
                   help="assign number of waveforms to generate and inspect to NUM", metavar="NUM")
-
 parser.add_option("-b", "--bins", dest="numBins", type=int,
                   help="Select the size of the bins to use, assigns to NUM", metavar="NUM")
-
 (options, args) = parser.parse_args()
 # * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -68,41 +59,44 @@ plots_directory = './bin_plots'
 if not os.path.exists(plots_directory):
     os.makedirs(plots_directory)
 
+# Create an igraph graph object with 'g'
 g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/all_%u/all.txt" % numNodes)
 
+# Initialize graph labels
+# 'es' is the edge array
+# 'vs' is the vertex array
 g.es['label'] = g.es['weight']
 g.vs['label'] = [0] * len(g.vs)
 
-# Instantiate lists
+# Instantiate index and tracking lists
 a = []
 edgeWeights = []
 edgeLabels = []
 neighborList = []
 
-# Set up
+# Create a unique id for each vertex
+# with the first vertex = 1 and the
+# last equal to len(g.vs)-1.
 for r in range(len(g.vs)):
     a.append('%s' % str(r))
+
+# Assign index values to label
+# values in graph object
 g.vs['label'] = a
 
-for r in range(len(g.es['weight'])):
-    edgeWeights.append(r)
-    edgeLabels.append(r)
-
-for r in range(len(g.vs)):
-    a.append('%s' % str(r))
-g.vs['label'] = a
-
-# Vars for duration calculation
+# Declare vars for duration
+# calculation
 fmin = 20.0
 chi = 0
 
-# Arrays to handle duration calculations
+# Declare arrays to handle duration
+# calculations
 durArr = []
 countArr = []
 
-# Creates duration index
+# Create duration index
 for t in range(numNodes):
-    # Duration calculation
+    # Perform duration calculation
     chi = lalsim.SimIMRPhenomBComputeChi(
         template_bank[t].mass1,  # Mass 1
         template_bank[t].mass2,  # Mass 2
@@ -110,16 +104,26 @@ for t in range(numNodes):
         template_bank[t].spin2z  # Sping 2 Z
     )
     dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(template_bank[t].mass1 * lal.MSUN_SI,
-                                                         template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
+                                                         template_bank[t].mass2 * lal.MSUN_SI,
+                                                         chi,
+                                                         fmin)
+    # Append the calculate duration to 'durArr'
     durArr.append(dur)
+
+    # Create an array [0, 1, 2, 3 ..., len(numNodes)-1]
     countArr.append(t)
 
-# Set the duration of each vertex
+# Set the duration label of each
+# vertex in graph object
 g.vs['duration'] = durArr
 
-# Sort countArr using values from durArr, and assign it to 'index' array
+# Sort countArr using values from durArr,
+# and assign it to 'index' array.
+# The he n'th value in 'index' corresponds to
+# where the n'th shortest waveform is in 'durArr'
 index = [x for (y, x) in sorted(zip(durArr, countArr))]
 
+# Instantiate more index and tracking lists
 neighborObjArr = []
 weightNumArr = []
 count = 0
@@ -127,7 +131,10 @@ neighborEdge = []
 aBin = []
 bins = []
 
+
+
 for counter in range(numNodes):
+
     # Clears the list of neighbors to the old vertex
     to_bin = []
     neighborList = []
@@ -151,13 +158,14 @@ for counter in range(numNodes):
     source = primaryVertex
 
     for counter1 in neighborList:
-        # This finds the target node
+
+        # Finds the target node
         target = g.vs.find(label='%s' % counter1['label'])
 
         # Appends the target to 'vertexObjArr'.
         vertexObjArr.append(target)
 
-        # This step finds the neighboring veretx corresponding to 'counter1'
+        # Finds the edge between 'source' and 'target'
         try:
             neighborEdge = g.es.find(_source=source.index, _target=target.index)
         except ValueError:
@@ -166,8 +174,9 @@ for counter in range(numNodes):
         # Appends the edge between source and target to 'neighborObjArr'
         neighborObjArr.append(neighborEdge)
 
-        # This appends the weight of the edge to 'weightNumArr'
+        # Appends the weight of the edge to 'weightNumArr'
         weightNumArr.append(neighborEdge['weight'])
+
     # Sort neighborObjArr using values from weightNumArr
     sortedEdgeArr = [x for (y, x) in sorted(zip(weightNumArr, neighborObjArr))]
 
@@ -199,10 +208,10 @@ for counter in range(numNodes):
     g.delete_vertices(to_bin)
     to_bin = []
 
-# Print results of the binning...
+# Print results of the binning
 print bins
 
-# Generate plots...
+# Generate plots
 corM1 = copy.deepcopy(bins)
 corM2 = copy.deepcopy(bins)
 
@@ -210,15 +219,6 @@ for x in range(len(bins)):
     for y in range(len(bins[x])):
         corM1[x][y] = template_bank[int(bins[x][y])].mass1
         corM2[x][y] = template_bank[int(bins[x][y])].mass2
-
-'''
-for x in range(len(corM1)):
-        for y in range(len(corM1[x])):
-                if int(corM1[x][y]) < int(corM2[x][y]):
-                        corM1[x][y], corM2[x][y] = corM2[x][y], corM1[x][y]
-                else:
-                        continue
-'''
 
 number = len(bins)
 cmap = plt.get_cmap('gnuplot')

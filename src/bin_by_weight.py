@@ -85,8 +85,6 @@ edgeWeights = []
 edgeLabels = []
 neighborList = []
 
-pr
-
 color_list = ['red', 'blue', 'green',
                           'cyan', 'pink', 'orange',
                           'grey', 'yellow', 'white',
@@ -130,61 +128,3 @@ plt.legend(loc='best')
 plt.savefig(plots_directory + '/walktrap_bin_by_weight_%s_plot.png' % str(len(list(com5AsClustering))), dpi=1000)
 
 plt.close()
-
-'''
-if toUse == 3:
-        print '\n'
-        print "Clustering nodes... (Fastgreedy)"
-        print "\n"
-
-        com6 = g.community_fastgreedy(weights='weight')
-        print 'Cluster by: Fastgreedy'
-        print(com6.as_clustering(n))
-        # toPlot = igraph.plot(com6.as_clustering(n), bbox=[2000,2000])
-        # toPlot.save('./waveform_graph_plots/plot_%s_fastgreedy.jpg' % str(numNodes))
-
-        com6AsClustering = com6.as_clustering(n)
-        toPlot = igraph.plot(com6.as_clustering(n), bbox=[2000,2000], vertex_color=[color_list[x] for x in com6AsClustering.membership])
-        toPlot.save(plots_directory + 'walktrap_bin_by_weight_%s_graph.png' % str(len(list(com6AsClustering))))
-
-        # Plotting...
-        corM1 = copy.deepcopy(list(com6AsClustering))
-        corM2 = copy.deepcopy(list(com6AsClustering))
-        for x in range(len(com6AsClustering)):
-                for y in range(len(com6AsClustering[x])):
-                        corM1[x][y] = template_bank[int(com6AsClustering[x][y])].mass1
-                        print "corM1:", corM1[x][y]
-                        print "template_bank M1:", template_bank[int(com6AsClustering[x][y])].mass1
-                        print " "
-
-                        corM2[x][y] = template_bank[int(com6AsClustering[x][y])].mass2
-                        print "corM2:", corM2[x][y]
-                        print "template_bank M2:", template_bank[int(com6AsClustering[x][y])].mass2
-                        print " "
-
-        number = len(com6AsClustering)
-        cmap = plt.get_cmap('gnuplot')
-        colors = [cmap(i) for i in np.linspace(0, 1, number)]
-
-        for i, color in enumerate(colors, start=1):
-                plt.plot(corM1[i - 1], corM2[i - 1], "o", markersize=3, markeredgewidth=0.0, color=color,
-                                 label='Bin {i}'.format(i=i))
-                # print i
-        plt.legend(loc='best')
-
-        plt.savefig(plots_directory + 'fastgreedy_bin_by_weight_%s_plot.png' % str(len(list(com6AsClustering))), dpi=1000)
-
-        plt.close()
-'''
-
-'''
-if toUse == 4:
-        print '\n'
-        print "Clustering nodes... (Multilevel)"
-        print '\n'
-        com7 = g.community_multilevel(weights='weight')
-        print 'Cluster by: Multilevel'
-        print(com7)
-# toPlot = igraph.plot(com7, bbox=[2000,2000],vertex_color=[color_list[x] for x in com7.membership])
-# toPlot.save('./waveform_graph_plots/plot_%s_multilevel.jpg' % str(numNodes))
-'''
