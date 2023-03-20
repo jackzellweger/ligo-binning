@@ -745,8 +745,8 @@ Here’s the plot we got from the data. It’s a bit different, with different s
 We thought of an interesting way to visualize the quality of the bins: within each bin, what was the minimum match between any two clusters? You can see below that by this metric, the first algorithm seems to have done better. However, this proved to be a poor proxy for how the bins would affect sensitivity.
 
 <p align="center">
-	<img src="./images/min-match-duration.png" width="400">
-	<img src="./images/min-match-walktrap.png" width="400">
+	<img src="./images/min-match-duration.png" width="350">
+	<img src="./images/min-match-walktrap.png" width="350">
 </p>
 
 The graphs below are what we got returned from the group that tested the effectiveness of our bins. If you take a look at the three graphs below, you’ll be able to see (if you squint really hard) that the walktrap algorithm was the best. The algorithm seems to have improved the  $M_{\mathrm{total}} \in [416.67–600] M_\odot$ range the most.
@@ -757,16 +757,11 @@ The graphs below are what we got returned from the group that tested the effecti
 	<img src="./images/far-plot-original.png" width="600">
 </p>
 
-**Walktrap**
+**Walktrap, duration**
 
 <p align="center">
-	<img src="./images/far-plot-walktrap.png" width="600">
-</p>
-
-**Duration**
-
-<p align="center">
-	<img src="./images/far-plot-duration.png" width="600">
+	<img src="./images/far-plot-walktrap.png" width="350">
+	<img src="./images/far-plot-duration.png" width="350">
 </p>
 
 A more rigorous analysis revealed that the greatest sensitivity gains in narrow bands of the the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ range were upwards of 5%. Success!
