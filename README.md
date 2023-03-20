@@ -192,7 +192,7 @@ binSize=$(( $numberEdges / $2 ))
 The script then used the number of edges in the complete graph to determine how many cores to use for processing. It checked for the largest divisor of the number of edges that matches the number of cores specified in the command line argument.
 
 ```bash
-# Find number of cores to use based on number of edges,
+# Finds number of cores to use based on number of edges,
 # ensuring that the number of edges is evenly divisible
 # by the number of cores
 for i in `seq $2 0`
@@ -202,14 +202,14 @@ do
         fi
 done
 
-# Check to ensure divisibility
+# Checks to ensure divisibility
 ifIt=$(($numberEdges % $numCores))
 mult=$(($numberEdges / $numCores))
 if let '$ifIt != 0'; then
         exit
 fi
 
-# Print to screen
+# Prints to screen
 echo '* * * * * * * *' 
 echo 'Will use $i cores'
 echo '* * * * * * * *' 
@@ -243,10 +243,10 @@ We passed a few parameters to the `generage_matches.py`, with the following flag
 We can take a look under the hood of these scripts to see how the flags interacted with the scripts.
 
 ```python
-# Initialize the option parser
+# Initializes the option parser
 parser = optparse.OptionParser()
 
-# Indicate number of waveforms in the template bank .xml file
+# Indicates number of waveforms in the template bank .xml file
 parser.add_option("-n", "--number", dest="numTemplates", type=int,
                   help="Assign number of waveforms to generate and \
 									inspect to NUM", metavar="NUM", default=10)
@@ -263,7 +263,7 @@ parser.add_option("-t", "--to", dest="generateTo", type=int,
                   help="Stop generating at the Nth waveform \
 									(exclusive)", metavar="N")
 
-# Ingest options
+# Ingests options
 generateFrom = options.__dict__['generateFrom']
 generateTo = options.__dict__['generateTo']
 (options, args) = parser.parse_args()
@@ -276,15 +276,15 @@ The size and shape of the complete graph represented in list form changed pretty
 So we passed the number of templates into each script instance, and generated the complete edge list with `edge_list = igraph.Graph.Full(numTemplates)`.
 
 ```python
-# Create list of edge relations
+# Creates list of edge relations
 print "Creating graph edges..."
 edge_list = igraph.Graph.Full(numTemplates)
 
-# Create list of edge relations
+# Creates list of edge relations
 print "Creating graph edges..."
 edge_list = igraph.Graph.Full(numTemplates)
 
-# This writes an edge list
+# Writes an edge list
 print "Writing .ncol of graph edges..."
 edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='ncol')
 ```
@@ -334,7 +334,7 @@ To keep everything neat, we decided to reorder the waveforms based on their dura
 First, we declared some arrays and variables we planned on using in our duration calculation and sorting...
 
 ```python
-# Declare the array we are going to be using in match calculation
+# Declares the array we are going to be using in match calculation
 fs = [0, 0]
 sigmasq = [0, 0]
 new = [0, 0]
@@ -345,7 +345,7 @@ hcross = [0, 0]
 fmin = 20.0
 chi = 0
 
-# Declare tracking indices
+# Declares tracking indices
 durArr = []
 countArr = []
 ```
@@ -370,13 +370,13 @@ for t in range(numTemplates):
 Next, we performed non-destructive re-ordering with an array `index` whose entries contained the waveform IDs, ordered by waveform duration. So, for example, in `index = [6, 45, 87, 31, 21, 47]`, waveform `6` was the shortest in duration, waveform `45` was the second-shortest duration, waveform `87` was the third-shortest in duration, and so on. We kept the originals just in case we needed to reference them later.
 
 ```python
-# Sort countArr using values from durArr
+# Sorts countArr using values from durArr
 index = [x for (y, x) in sorted(zip(durArr, countArr))]
 
 print "Generating duration list..."
 print "Waveform 0 is shortest, with ascending order..."
 
-# Print out each waveform ID, and it's duration starting with the shortest
+# Prints out each waveform ID, and it's duration starting with the shortest
 for m in range(len(index)):
     print "For waveform # %s, (originally # %s)" % (str(m),
 					str(index[m])), " ,the duration is %s" % str(durArr[index[m]])
@@ -414,14 +414,13 @@ for current in range(len(edge_array)):
         before = int(edge_array[current - 1][0])
 
     if (before == after and current != 0):
-				r = 1
-		    # print "Not generating another template [0]"
+    	r = 1
+		# print "Not generating another template [0]"
     else:
         r = 0
-		    # print "Generating a new template [0]"
+		# print "Generating a new template [0]"
 
     for q in range(r, 2):
-
         # ... COMPARE WAVEFORMS ...
 ```
 
@@ -453,7 +452,7 @@ If we converted the frequency series generated in the step above into waveforms 
 After we had the frequency-domain signal for the system, we performed some additional data prep, including conversion to a [complex frequency series](https://lscsoft.docs.ligo.org/lalsuite/lal/struct_c_o_m_p_l_e_x8_frequency_series.html), whitening, and other normalization. All this made the waveform more useable for the match function.
 
 ```python
-# Convert to a complex frequency series
+# Converts to a complex frequency series
 new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
 																				fs[q].epoch,
 																				fs[q].f0,
@@ -462,15 +461,15 @@ new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
 																				fs[q].data.length)
 # ... MORE CLEANING ...
 
-# FS: Whiten waveform
+# FS: Whitens waveform
 new[q].data.data /= ASD
 
-# FS: Normalize waveform
+# FS: Normalizes waveform
 sigmasq[q] = float(np.vdot(new[q].data.data, new[q].data.data).real * 4 * 1. / duration)
 new[q].data.data /= sigmasq[q] ** 0.5
 
-# Calculate match of each waveform with one another
-# and write to file on disk
+# Calculates match of each waveform with one another
+# and writes to file on disk
 target.write('%s %s %s' % (str(index[int(edge_array[current][0])]), str(index[int(edge_array[current][1])]),
                            str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
 ```
@@ -545,7 +544,7 @@ parser.add_option("-b", "--bins", dest="numBins", type=int,
 We then took in a text file that represented the complete graph with its edge weights to create an `igraph` graph object `g`, which we operated on from here-on-out. 
 
 ```python
-# Create an igraph graph object with 'g'
+# Creates an igraph graph object with 'g'
 g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/all_%u/all.txt" % numNodes)
 ```
 
@@ -569,27 +568,28 @@ All of this happened in a two-layer nested `for` loop. Here’s the basic struct
 
 ```python
 for counter in range(numNodes):
-	# Loop through nodes
+	# Loops through nodes
 	for counter1 in range(neighborList:)
-		# Loop through neighbors of that node
+		# Loops through neighbors of that node
 ```
 
 In that first loop above, `for counter in range(numNodes):`, we had the following. This routine 1.) set the next vertex we’re going to look at based on the next vertex in the counter, 2.) found that vertex’s neighbors, which returned a list of vertex objects and then 3.) assigned those neighbors to a list…
 
 ```python
 for counter in range(numNodes):
-		# Sets the new vertex of interest
-    # if primaryVertex doesn't exist, we skip the iteration
+	# Sets the new vertex of interest
+    # if primaryVertex doesn't exist,
+    # we skip the iteration
     try:
         primaryVertex = g.vs.find(label='%s' % str(index[counter]))
     except ValueError:
         continue
 
-		# Assigns the source vertex
+	# Assigns the source vertex
     source = primaryVertex
 
     # Finds the list of neighbors of our
-		# primary vertex
+	# primary vertex
     neighborList = primaryVertex.neighbors()
 ```
 
@@ -619,23 +619,23 @@ for counter1 in neighborList:
 Then, we were back in the original `for` loop, so we sorted the list of vertex objects connected to the source node based on the weight of their connection to the source vertex…
 
 ```python
-# Sort neighborObjArr using values from weightNumArr
+# Sorts neighborObjArr using values from weightNumArr
 sortedEdgeArr = [x for (y, x) in sorted(zip(weightNumArr, neighborObjArr))]
 
-# Sort vertexObjArr using values from weightNumArr
+# Sorts vertexObjArr using values from weightNumArr
 sortedVertexArr = [x for (y, x) in sorted(zip(weightNumArr, vertexObjArr))]
 ```
 
 And finally, created our bin, using the `source` vertex and the top `selectTop` most similar vertices based on their similarity to the `source` vertex.
 
 ```python
-# Now we select the bottom 'selectTop' elements of 'sortedVertexArr'
+# Selects the bottom 'selectTop' elements of 'sortedVertexArr'
 to_bin = sortedVertexArr[len(sortedVertexArr) - (selectTop - 1):]
 
-# Now we finally add the source vertex to the beginning of the bin.
+# Adds the source vertex to the beginning of the bin.
 to_bin.insert(0, source)
 
-# We collect all the templates labels to go to a single bin into an array
+# Collects all the templates labels to go to a single bin into an array
 for x in range(len(to_bin)):
     aBin.append(to_bin[x]['label'])
 
@@ -644,7 +644,7 @@ for x in range(len(to_bin)):
 We then collected all the vertices to go into the new into an array and append the array to a 2D array of bins. Finally, the vertices in the new bin were deleted from the graph, and we restarted the process….
 
 ```python
-# We append the array to a 2D array of bins
+# Appends the array to a 2D array of bins
 bins.append(aBin)
 
 # Local clean up
@@ -656,21 +656,21 @@ to_bin = []
 After we had all the bins ready to go in the 2D array `bins`, we could create the plots.
 
 ```python
-# Create two copies of the bins that
+# Creates two copies of the bins that
 # correspond to the binary mass of object 1
 # and the binary mass of object 2 for
 # each template
 corM1 = copy.deepcopy(bins)
 corM2 = copy.deepcopy(bins)
 
-# Set masses equal to corresponding indices
+# Sets masses equal to corresponding indices
 # in the 
 for x in range(len(bins)):
     for y in range(len(bins[x])):
         corM1[x][y] = template_bank[int(bins[x][y])].mass1
         corM2[x][y] = template_bank[int(bins[x][y])].mass2
 
-# ... Plotting calculations ...
+# ... Plots calculations ...
 
 plt.savefig('./bin_plots/%s_bin_plot.png' % str(len(bins)), dpi=1000)
 plt.close()
