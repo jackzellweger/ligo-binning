@@ -522,7 +522,7 @@ Embedded in the complete graph we had created, were two types of information, bo
 
 After some careful study of [how clustering algorithms worked](https://arxiv.org/abs/physics/0512106), we resolved to try two approaches, with each approach corresponding to one of these data types. The first clustering algorithm we implemented would use only duration to cluster, and the second would use the edge weights, or the relationships between all the waveforms to cluster.
 
-### Bin by Duration: How We Did It
+### An Algorithm To Bin By Duration
 
 This was a relatively simple algorithm. It basically worked in the following way:
 
@@ -764,7 +764,9 @@ The graphs below are what we got returned from the group that tested the effecti
 	<img src="./images/far-plot-duration.png" width="350">
 </p>
 
-A more rigorous analysis revealed that the greatest sensitivity gains in narrow bands of the the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ range were upwards of 5%. Success!
+A more rigorous analysis revealed ~5% sensitivity gains resulting from the following clustering algorithms...
+- In the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ and $M_{\mathrm{total}} \in [233.33–416.67] M_\odot$, the entire bandwidth improved in the range of 3–5% with the bin-by-duration algorithm.
+- In the $M_{\mathrm{total}} \in [50–233.33] M_\odot$ range, we saw that walktrap was most effective, with improvements in the upper ranges especially on the order of ~5%.
 
 # Future Work
 
