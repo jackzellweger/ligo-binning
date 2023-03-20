@@ -50,19 +50,19 @@ This Matched Filtering algorithm works by convolving the gravitational wave mode
 	<img src="./images/acf-true.gif" width="475">
 </p>
 
-So let’s add some artificial noise.
+So let’s add some artificial noise...
 
 <p align="center">
 	<img src="./images/hoft-ss.gif" width="475">
 </p>
 
-And then run our convolution SNR calculation.
+And then run our convolution SNR calculation...
 
 <p align="center">
 	<img src="./image/snr-signal.gif" width="475">
 </p>
 
-You can see that even with noise added, there’s a distinct shape that emerges in the SNR data. However, fools gold is also possible. There are also spikes in the data that result in SNR that looks a lot like the SNR from a detection to the untrained eye.
+Even with noise added, there’s a distinct shape that emerges in the SNR data. However, fools gold is also possible. There are also spikes in the data that result in SNR that looks a lot like the SNR from a detection to the untrained eye.
 
 <p align="center">
 	<img src="./images/snr_delta.gif" width="475">
