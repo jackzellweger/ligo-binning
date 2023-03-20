@@ -754,7 +754,7 @@ The graphs below are what we got returned from the group that tested the effecti
 **Original**
 
 <p align="center">
-	<img src="./images/far-plot-original.png" width="600">
+	<img src="./images/far-plot-original.png" width="400">
 </p>
 
 **Walktrap, duration**
