@@ -32,12 +32,9 @@ from lalinspiral import InspiralSBankComputeMatch
 from lal import CreateCOMPLEX8FrequencySeries
 # * * * * * * * * * * * * * * * * * * * * * * *
 
-
 class LIGOLWContentHandler(ligolw.LIGOLWContentHandler):
         pass
-
 lsctables.use_in(LIGOLWContentHandler)
-
 xmldoc = ligolw_utils.load_filename("H1-TMPLTBANK-966393725-2048.xml", contenthandler=LIGOLWContentHandler)
 template_bank = lsctables.SnglInspiralTable.get_table(xmldoc)
 
@@ -72,7 +69,7 @@ else:
 plots_directory = './bin_plots'
 
 # If there isn't a folder in the directory, it creates one.
-print "Checking for direcotry path..."
+print "Checking for directory path..."
 if not os.path.exists(plots_directory):
         os.makedirs(plots_directory)
 
