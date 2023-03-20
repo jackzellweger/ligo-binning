@@ -27,7 +27,7 @@ There are three distinct stages of a black hole merger.
 The parameters of different binary black hole systems affect how black holes merge at all these stages, resulting in wildly different binary black hole signatures. However, generally, all these  all come together to make a gravitational wave signature that looks like this…
 
 <p align="center">
-	<img src="./images/waveform-shape.png" width="600">
+	<img src="./images/waveform-shape.png" width="475">
 </p>
 
 # The Theory
@@ -47,25 +47,25 @@ This Matched Filtering algorithm works by convolving the gravitational wave mode
 ![Wade, L. An illustration of LIGO's template convolution Approach. Kenyon College Department of Physics.](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d09f1009-843a-4c3c-904d-1d8b3135c063/ACF_true.gif)
 
 <p align="center">
-	<img src="./images/acf-true.gif" width="600">
+	<img src="./images/acf-true.gif" width="475">
 </p>
 
 So let’s add some artificial noise.
 
 <p align="center">
-	<img src="./images/hoft-ss.gif" width="600">
+	<img src="./images/hoft-ss.gif" width="475">
 </p>
 
 And then run our convolution SNR calculation.
 
 <p align="center">
-	<img src="./image/snr-signal" width="600">
+	<img src="./image/snr-signal" width="475">
 </p>
 
 You can see that even with noise added, there’s a distinct shape that emerges in the SNR data. However, fools gold is also possible. There are also spikes in the data that result in SNR that looks a lot like the SNR from a detection to the untrained eye.
 
 <p align="center">
-	<img src="./images/snr_delta.gif" width="600">
+	<img src="./images/snr_delta.gif" width="475">
 </p>
 
 [All images from Les Wade, Kenyon College Department of Physics.]
@@ -79,13 +79,13 @@ In order to narrow our list of candidates even more, we calculate the $\sigma$ v
 The first step to plot of all the candidate detections with SNR on the x-axis and $\chi^2/\mathrm{SNR^2}$ on the y-axis. A cluster forms in this space as more detection candidates accrue. The location of the cluster within the space is based on the characteristic noise sources from the detector, the geographic area, the shape of the waveform template, etc.
 
 <p align="center">
-	<img src="./images/chisq-snr-cluster-1.png" width="600">
+	<img src="./images/chisq-snr-cluster-1.png" width="475">
 </p>
 
 Once we have a cluster, we will assume that all of the candidates in the cluster are actually just false-positives from noise, and can start to form a probability density function (PDF) of false-positives. If we see a gravitational wave candidate outside of the main cluster, we can assign a probability that corresponds to seeing a signature that looks like that outside of the normal cluster.
 
 <p align="center">
-	<img src="./images/chisq-snr-cluster-2.png" width="600">
+	<img src="./images/chisq-snr-cluster-2.png" width="475">
 </p>
 
 The only problem with this strategy: there aren’t enough candidate detections corresponding to a single waveform to form a robust PDF for that waveform. We need a lot of noise samples to really build out a good idea of what kinds of areas of the graph we expect these blips to appear. So, we solve that problem by binning like waveforms together when forming PDFs.
@@ -93,7 +93,7 @@ The only problem with this strategy: there aren’t enough candidate detections 
 Let’s plot another, very similar waveform’s noise PDF on top of the first’s above…
 
 <p align="center">
-	<img src="./images/chisq-snr-cluster-3.png" width="600">
+	<img src="./images/chisq-snr-cluster-3.png" width="475">
 </p>
 
 Because the waveforms are very similar, but slightly different in shape, the clusters are centered on very similar, but slightly different locations. The clusters are in different locations because for each waveform template shape, there are different values of $\mathrm{SNR}^2$ and $\chi^2$ that constitute anomalies worth further investigation. In other words, noise interacts with different waveforms differently.
@@ -105,7 +105,7 @@ Ideally, the background noise characteristics should be calculated individually 
 But we have to ensure that the bins are well-made. The waveforms that form the black and grey dots were affected by noise in similar ways, producing very similar clusters. We can expect that a a combined PDF would be sound. However, if we combine the black and grey clusters with the green cluster below, we might see a reduction in sensitivity. 
 
 <p align="center">
-	<img src="./images/chisq-snr-cluster-4.jpg" width="600">
+	<img src="./images/chisq-snr-cluster-4.jpg" width="475">
 </p>
 
 When trying to detect gravitational waves, it's important to use the right "bins" for noise signature clusters in order to enhance LIGO's signal sensitivity. If a gravitational wave candidate falls within the populated area of its waveform PDF, it's probably just a false alarm. However, if the candidate falls outside of a main cluster, it's more likely to be a real gravitational wave detection.
@@ -113,7 +113,7 @@ When trying to detect gravitational waves, it's important to use the right "bins
 Let's say the black, grey, and green clusters are all within the same bin, and we generate a single PDF to represent the combined noise. If a candidate originates from one of these clusters, and the binning isn't great with too much variation, we could miss signals. In the diagram, a potential signal that should be far from the grey waveform's ideal PDF is instead within the green PDF, which mistakenly assigns it a higher probability of being a false alarm.
 
 <p align="center">
-	<img src="./images/chisq-snr-cluster-5.png" width="600">
+	<img src="./images/chisq-snr-cluster-5.png" width="475">
 </p>
 
 ### The Likelihood ($\mathcal{L}$)
@@ -144,7 +144,7 @@ Very few candidates make it this far, but for the ones that do, we start taking 
 And here’s what the bins actually look like on a graph of all the waveforms where the y-axis is chirp mass ($\mathcal{M}$) and the x-axis is mass ratio of the binary system ($\mathcal{Q}$).
 
 <p align="center">
-	<img src="./images/mass-plot-1.jpg" width="600">
+	<img src="./images/mass-plot-1.jpg" width="475">
 </p>
 
 This graph above shows **default binning** by chirp mass ($\mathcal{M}$) only. The image of the waveform corresponds to the waveform at the starred location.
@@ -172,7 +172,7 @@ To identify natural clusters in the waveforms, we had to determine the degree of
 We can represent the resulting relationships with a complete graph as seen below. In this image, each node represents a waveform template, and each edge represents its similarity to another waveform template.
 
 <p align="center">
-	<img src="./images/25-edge-plot.jpg" width="600">
+	<img src="./images/25-edge-plot.jpg" width="475">
 </p>
 
 As we added more and more waveforms (nodes) to this complete graph, we got a combinatorial explosion; the number of necessary comparisons between waveform templates (edges) increased by $\frac{n(n-1)}{2}$. That’s a time complexity of $\mathcal{O}(n^2)$, which isn’t great, especially when we were dealing with thousands of nodes. There wasn’t  really a quick way around this though. Since we were prioritizing accuracy, and didn’t have the time to optimize, we didn’t focus on optimizing the number of calculations or comparisons in our routine.
@@ -294,7 +294,7 @@ edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='nc
 With the code above, we basically generated a list of all the edges in a complete graph given a certain number of nodes. Each item in the list we generated corresponded to an edge: the black lines in this visual.
 
 <p align="center">
-	<img src="./images/simple-complete-graph.jpg" width="600">
+	<img src="./images/simple-complete-graph.jpg" width="475">
 </p>
 
 As mentioned above, as I increased the number of nodes in the complete graph, the number of edges went up by $\frac{n(n-1)}{2}$. In this case, the number of nodes in our graph was `numTemplates`, the number of waveform templates in our template bank.
@@ -447,7 +447,7 @@ This waveform generation function is built into the `LAL` library, so I didn’t
 If we converted the frequency series generated in the step above into waveforms before they were converted into frequency series, this is what they looked like. (I know it's not the best render, but it’s what I have!)
 
 <p align="center">
-	<img src="./images/waveform-render.png" width="600">
+	<img src="./images/waveform-render.png" width="475">
 </p>
 
 After we had the frequency-domain signal for the system, we performed some additional data prep, including conversion to a [complex frequency series](https://lscsoft.docs.ligo.org/lalsuite/lal/struct_c_o_m_p_l_e_x8_frequency_series.html), whitening, and other normalization. All this made the waveform more useable for the match function.
@@ -492,7 +492,7 @@ Now that we had calculated all the similarities of all the waveforms to all the 
 Here’s what we got back from sensitivity estimation group whenever we’d send our bins. The x-axis shows Combined FAR (False Alarm Rate) in Hertz, and the y-axis shows the range of origination of the signal. The smaller the FAR at a given range, the more sensitive we can call the instrument. There were three lines, each corresponding to different ranges of $M_\odot$, or solar mass.
 
 <p align="center">
-	<img src="./images/far-plot-original.png" width="600">
+	<img src="./images/far-plot-original.png" width="475">
 </p>
 
 So, we had a very clear ask (to find the optimal bins), and a very clear way to measure results (send the bins off and receive a score).
@@ -504,7 +504,7 @@ This was where I was able to use some of my creativity, where the real experimen
 ---
 
 <p align="center">
-	<img src="./images/mathematica-clusters.png" width="600">
+	<img src="./images/mathematica-clusters.png" width="475">
 </p>
 
 Source: [Mathematica CommunityGraphPlot[] Documentation](https://reference.wolfram.com/language/ref/CommunityGraphPlot.html) & my archives
@@ -735,7 +735,7 @@ plt.close()
 Here’s the plot we got from the data. It’s a bit different, with different sized buckets, and a different shape, cutting more diagonally this time.
 
 <p align="center">
-	<img src="./images/mass-plot-2.png" width="600">
+	<img src="./images/mass-plot-2.png" width="475">
 </p>
 
 **Our optimized bins** take into account qualitative similarity of each template to every other template. After testing, we found that `community_walktrap()` worked best.
@@ -754,7 +754,7 @@ The graphs below are what we got returned from the group that tested the effecti
 **Original**
 
 <p align="center">
-	<img src="./images/far-plot-original.png" width="400">
+	<img src="./images/far-plot-original.png" width="350">
 </p>
 
 **Walktrap, duration**
