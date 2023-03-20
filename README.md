@@ -766,14 +766,15 @@ The graphs below are what we got returned from the group that tested the effecti
 
 A more rigorous analysis revealed that the greatest sensitivity gains in narrow bands of the the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ range were upwards of 5%. Success!
 
+# Future Work
+
+- Incorporate both the duration (proxy for similarity) and edge weight in the clusters.
+- Consider using the Louvain method for community detection, available in the igraph library. This method optimizes a modularity score, which measures the quality of the partition of the graph into communities.
+- Test whether the Louvain method can create bins that are more homogeneous than the other methods we tried.
+- Explore whether optimizing for Louvain homogeneity could make a difference.
+- Document how we tested instrument sensitivity.
+
 # References & Further Reading
 
 - Messic, Cody *et al.* ****[Analysis Framework for the Prompt Discovery of Compact Binary Mergers in Gravitational-wave Data](https://arxiv.org/abs/1604.04324)****
 - Pons, Pascal, and Matthieu Latapy. ****[Computing communities in large networks using random walks](https://arxiv.org/abs/physics/0512106)****
-
-# Future Work
-
-- Incorporate both the duration (proxy for similarity) and edge weight in the clusters.
-- Consider using the Louvain method for community detection, available in the igraph library. This method optimizes a modularity score, which measures the quality of the partition of the graph into communities. Test whether the Louvain method can create bins that are more homogeneous than the other methods we tried.
-- Explore whether optimizing for Louvain homogeneity could make a difference.
-- Document how we tested instrument sensitivity.
