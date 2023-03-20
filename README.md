@@ -294,7 +294,7 @@ edge_list.write("./edge_lists/edge_list_%s.ncol" % str(numTemplates), format='nc
 With the code above, we basically generated a list of all the edges in a complete graph given a certain number of nodes. Each item in the list we generated corresponded to an edge: the black lines in this visual.
 
 <p align="center">
-	<img src="./images/simple-complete-graph.jpg" width="475">
+	<img src="./images/simple-complete-graph.jpg" width="300">
 </p>
 
 As mentioned above, as I increased the number of nodes in the complete graph, the number of edges went up by $\frac{n(n-1)}{2}$. In this case, the number of nodes in our graph was `numTemplates`, the number of waveform templates in our template bank.
