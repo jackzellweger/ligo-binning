@@ -450,11 +450,11 @@ After we had the frequency-domain signal for the system, we performed some addit
 ```python
 # Converts to a complex frequency series
 new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
-																				fs[q].epoch,
-																				fs[q].f0,
-																				fs[q].deltaF,
-																				fs[q].sampleUnits,
-																				fs[q].data.length)
+										fs[q].epoch,
+										fs[q].f0,
+										fs[q].deltaF,
+										fs[q].sampleUnits,
+										fs[q].data.length)
 # ... MORE CLEANING ...
 
 # FS: Whitens waveform
