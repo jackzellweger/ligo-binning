@@ -1,7 +1,3 @@
-# Project
-
-**Unfortunately, you won’t be able to get this code running on your machine unless you install Python’s `LAL` libraries.**
-
 # Intro To LIGO
 
 ### This Document
