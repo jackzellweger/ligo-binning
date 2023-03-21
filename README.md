@@ -455,6 +455,7 @@ new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
 		fs[q].deltaF,
 		fs[q].sampleUnits,
 		fs[q].data.length)
+
 # ... MORE CLEANING ...
 
 # FS: Whitens waveform
