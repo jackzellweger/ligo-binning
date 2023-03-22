@@ -245,19 +245,19 @@ parser = optparse.OptionParser()
 # Indicates number of waveforms in the template bank .xml file
 parser.add_option("-n", "--number", dest="numTemplates", type=int,
                   help="Assign number of waveforms to generate and \
-									inspect to NUM", metavar="NUM", default=10)
+                  inspect to NUM", metavar="NUM", default=10)
 
 # A flag to let the program know which waveform in the list to start
 # generating from
 parser.add_option("-f", "--from", dest="generateFrom", type=int,
                   help="Start generating at the Nth waveform \
-									(inclusive)", metavar="N")
+                  (inclusive)", metavar="N")
 
 # A flag to let the program know which waveform in the list to end
 # generating
 parser.add_option("-t", "--to", dest="generateTo", type=int,
                   help="Stop generating at the Nth waveform \
-									(exclusive)", metavar="N")
+                  (exclusive)", metavar="N")
 
 # Ingests options
 generateFrom = options.__dict__['generateFrom']
