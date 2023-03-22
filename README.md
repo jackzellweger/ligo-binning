@@ -357,10 +357,12 @@ for t in range(numTemplates):
         template_bank[t].spin1z,  # Spin 1 Z
         template_bank[t].spin2z  # Sping 2 Z
     )
-    dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(template_bank[t].mass1 * lal.MSUN_SI,
-                                                         template_bank[t].mass2 * lal.MSUN_SI,
-                                                         chi,
-                                                         fmin)
+    dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(
+    	template_bank[t].mass1 * lal.MSUN_SI,
+        template_bank[t].mass2 * lal.MSUN_SI,
+        chi,
+        fmin)
+    
     durArr.append(dur)
     countArr.append(t)
 ```
