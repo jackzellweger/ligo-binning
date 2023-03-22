@@ -467,8 +467,15 @@ new[q].data.data /= sigmasq[q] ** 0.5
 
 # Calculates match of each waveform with one another
 # and writes to file on disk
-target.write('%s %s %s' % (str(index[int(edge_array[current][0])]), str(index[int(edge_array[current][1])]),
-                           str(InspiralSBankComputeMatch(new[0], new[1], workspace_cache))))
+target.write('%s %s %s' % (str(index[int(edge_array[current][0])]),
+						   str(index[int(edge_array[current][1])]),
+                           str(InspiralSBankComputeMatch(new[0],
+                           								 new[1],
+                           								 workspace_cache
+                           								 )
+                           )
+                           )
+)
 ```
 
 ### Taking Time
