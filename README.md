@@ -470,9 +470,9 @@ new[q].data.data /= sigmasq[q] ** 0.5
 target.write('%s %s %s' % (str(index[int(edge_array[current][0])]),
                            str(index[int(edge_array[current][1])]),
                            str(InspiralSBankComputeMatch(new[0],
-                           								 new[1],
-                           								 workspace_cache
-                           								 )
+                                                         new[1],
+                                                         workspace_cache
+                                                         )
                            )
                            )
 )
