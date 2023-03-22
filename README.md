@@ -358,7 +358,9 @@ for t in range(numTemplates):
         template_bank[t].spin2z  # Sping 2 Z
     )
     dur = 1.1 * lalsim.SimIMRSEOBNRv2ChirpTimeSingleSpin(template_bank[t].mass1 * lal.MSUN_SI,
-                                                         template_bank[t].mass2 * lal.MSUN_SI, chi, fmin)
+                                                         template_bank[t].mass2 * lal.MSUN_SI,
+                                                         chi,
+                                                         fmin)
     durArr.append(dur)
     countArr.append(t)
 ```
@@ -432,7 +434,7 @@ for q in range(r, 2):
             1.0 / duration,  # Sampling interval
             1.e6 * lal.PC_SI,  # distance
 	          # ... WAY MORE PARAMS ...
-        )
+                                             )
 ```
 
 This waveform generation function is built into the `LAL` library, so I didn’t need to know how it worked. As far as I knew, it took in binary system parameters, and output the frequency-domain gravitational-wave strain signal produced by the inspiral, merger, and ringdown phases of the binary system coalescence.
@@ -450,11 +452,12 @@ After we had the frequency-domain signal for the system, we performed some addit
 ```python
 # Converts to a complex frequency series
 new[q] = CreateCOMPLEX8FrequencySeries(fs[q].name,
-		fs[q].epoch,
-		fs[q].f0,
-		fs[q].deltaF,
-		fs[q].sampleUnits,
-		fs[q].data.length)
+                                       fs[q].epoch,
+                                       fs[q].f0,
+                                       fs[q].deltaF,
+                                       fs[q].sampleUnits,
+                                       fs[q].data.length
+                                       )
 
 # ... MORE CLEANING ...
 
