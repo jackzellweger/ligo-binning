@@ -362,7 +362,7 @@ for t in range(numTemplates):
         template_bank[t].mass2 * lal.MSUN_SI,
         chi,
         fmin)
-    
+
     durArr.append(dur)
     countArr.append(t)
 ```
@@ -544,9 +544,11 @@ Like `generate_matches.py`, we took in options that ask how many waveforms to ge
 ```python
 parser = optparse.OptionParser()
 parser.add_option("-n", "--number", dest="numNodes", type=int,
-                  help="assign number of waveforms to generate and inspect to NUM", metavar="NUM")
+                  help="assign number of waveforms to generate and inspect to NUM",
+                  metavar="NUM")
 parser.add_option("-b", "--bins", dest="numBins", type=int,
-                  help="Select the size of the bins to use, assigns to NUM", metavar="NUM")
+                  help="Select the size of the bins to use, assigns to NUM",
+                  metavar="NUM")
 (options, args) = parser.parse_args()
 ```
 
@@ -698,7 +700,9 @@ First, we imported the graph…
 ```python
 # Set 'g' equal to an undirected igraph graph object
 print "Importing graph..."
-g = igraph.Graph.Read_Ncol("./waveform_complete_graphs/all_%s/all.txt" % (str(numNodes)), directed=False)
+g = igraph.Graph.Read_Ncol(
+	"./waveform_complete_graphs/all_%s/all.txt" % (str(numNodes)),
+    directed=False)
 ```
 
 Then, we defined our `steps` parameter, ran the algorithm, and printed the results, all in just three lines of code. Wow! That was easy!
@@ -713,8 +717,11 @@ com5AsClustering = com5.as_clustering(n)
 Then we set up the data structures to plot…
 
 ```python
-toPlot = igraph.plot(com5.as_clustering(n), bbox=[2000,2000], vertex_color=[color_list[x] for x in com5AsClustering.membership])
-toPlot.save(plots_directory + '/walktrap_bin_by_weight_%s_graph.png' % str(len(list(com5AsClustering))))
+toPlot = igraph.plot(com5.as_clustering(n),
+                     bbox=[2000,2000],
+                     vertex_color=[color_list[x] for x in com5AsClustering.membership])
+toPlot.save(
+	plots_directory + '/walktrap_bin_by_\weight_%s_graph.png' % str(len(list(com5AsClustering))))
 ```
 
 And finally, plotted using the same subroutine we used in the last algorithm, discussed above, with a bit more formatting…
@@ -727,7 +734,7 @@ for x in range(len(com5AsClustering)):
         for y in range(len(com5AsClustering[x])):
                 corM1[x][y] = template_bank[int(com5AsClustering[x][y])].mass1
                 print "corM1:", corM1[x][y]
-                print "template_bank M1:", template_bank[int(com5AsClustering[x][y])].mass1
+                print "template_bank M1:",template_bank[int(com5AsClustering[x][y])].mass1
                 print " "
 
                 corM2[x][y] = template_bank[int(com5AsClustering[x][y])].mass2
