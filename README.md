@@ -473,9 +473,9 @@ target.write('%s %s %s' % (str(index[int(edge_array[current][0])]),
                                                          new[1],
                                                          workspace_cache
                                                          )
-                           )
-                           )
-)
+                            )
+                            )
+             )
 ```
 
 ### Taking Time
