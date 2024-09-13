@@ -64,7 +64,7 @@ Even with noise added, there’s a distinct shape that emerges in the SNR data. 
 	<img src="./images/snr_delta.gif" width="475">
 </p>
 
-[All images from Les Wade, Kenyon College Department of Physics.]
+[Waveform animations by Les Wade, Kenyon College Department of Physics.]
 
 These spikes are relatively common, and most of them end up not being gravitational wave signals. In order to narrow our pool of candidates for further investigation, we also calculate $\chi^2$ for each candidate. A low $\chi^2$ means that the trigger is a good fit to the GW template. However, at this stage, there are still relatively many signals that score reasonably well, with a high peak-SNR, and low $\chi^2$.
 
