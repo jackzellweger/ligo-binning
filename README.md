@@ -568,7 +568,7 @@ graph TD
 A[Start] --> B[Choose Next Node Not In Bin]
 B --> Q[Find all neighbors]
 Q --> R[Sort neighbors by duration]
-R --> C[Bin top `n` neighbors]
+R --> C[Bin top 'n' neighbors]
 C --> D{Done?}
 D -- No --> B
 D -- Yes --> E[Output bins]
