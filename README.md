@@ -531,7 +531,7 @@ Embedded in the complete graph we had created, were two types of information, bo
 
 After some careful study of [how clustering algorithms worked](https://arxiv.org/abs/physics/0512106), we resolved to try two approaches, with each approach corresponding to one of these data types. The first clustering algorithm we implemented would use only duration to cluster, and the second would use the edge weights, or the relationships between all the waveforms to cluster.
 
-### First Place: An Algorithm To Bin By Duration
+### An Algorithm To Bin By Duration
 
 This was a relatively simple algorithm. It basically worked in the following way:
 
@@ -689,11 +689,11 @@ plt.close()
 
 We found that sensitivity increased slightly, but wanted to see if we could do better, so we tried a different method of binning based on the edge weights.
 
-### Second Place: The Walktrap Algorithm
+### The Walktrap Algorithm
 
 Developing this next algorithm was a lot simpler from my standpoint because we used algorithms that had already been written, and that were present in the `igraph` library.
 
-We tried out a few different algorithms, including `community_walktrap()`, `community_fastgreedy()`, and `community_multilevel()`. All these algorithms ignored any information associated with the nodes like duration, and just used the weight of the edges (similarity values) between nodes to find clusters. After all this, we found that a simple binning by duration worked best. I will again, skip a bunch of setup, and just dive into the nitty-gritty of how it works.
+We tried out a few different algorithms, including `community_walktrap()`, `community_fastgreedy()`, and `community_multilevel()`, but found that walktrap worked best. All these algorithms ignored any information associated with the nodes like duration, and just used the weight of the edges (similarity values) between nodes to find clusters. I will again, skip a bunch of setup, and just dive into the nitty-gritty of how it works.
 
 First, we imported the graph…
 
@@ -754,7 +754,7 @@ Here’s the plot we got from the data. It’s a bit different, with different s
 	<img src="./images/mass-plot-2.png" width="475">
 </p>
 
-**Our optimized bins** take into account qualitative similarity of each template to every other template. After testing and all this, we found that binning by duration worked best.
+**Our optimized bins** take into account qualitative similarity of each template to every other template. After testing, we found that `community_walktrap()` worked best.
 
 # Summary of Results
 
@@ -765,7 +765,7 @@ We thought of an interesting way to visualize the quality of the bins: within ea
 	<img src="./images/min-match-walktrap.png" width="350">
 </p>
 
-The graphs below are what we got returned from the group that tested the effectiveness of our bins. If you take a look at the three graphs below, you’ll be able to see (if you squint really hard) that the duration algorithm was best. The algorithm seems to have improved the  $M_{\mathrm{total}} \in [233.33–600] M_\odot$ range the most.
+The graphs below are what we got returned from the group that tested the effectiveness of our bins. If you take a look at the three graphs below, you’ll be able to see (if you squint really hard) that the walktrap algorithm was the best. The algorithm seems to have improved the  $M_{\mathrm{total}} \in [416.67–600] M_\odot$ range the most.
 
 **Original**
 
@@ -780,7 +780,9 @@ The graphs below are what we got returned from the group that tested the effecti
 	<img src="./images/far-plot-duration.png" width="350">
 </p>
 
-A more rigorous analysis revealed ~5% sensitivity gains resulting from the simple bin by duration algorithm. In the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ and $M_{\mathrm{total}} \in [233.33–416.67] M_\odot$, the entire bandwidth improved in the range of 3–5% with the bin-by-duration algorithm.
+A more rigorous analysis revealed ~5% sensitivity gains resulting from the following clustering algorithms...
+- In the $M_{\mathrm{total}} \in [416.67–600] M_\odot$ and $M_{\mathrm{total}} \in [233.33–416.67] M_\odot$, the entire bandwidth improved in the range of 3–5% with the bin-by-duration algorithm.
+- In the $M_{\mathrm{total}} \in [50–233.33] M_\odot$ range, we saw that walktrap was most effective, with improvements in the upper ranges especially on the order of ~5%.
 
 # Future Work
 
